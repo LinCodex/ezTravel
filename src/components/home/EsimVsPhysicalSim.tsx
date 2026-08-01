@@ -19,10 +19,6 @@ export function EsimVsPhysicalSim() {
       <div className="max-w-6xl mx-auto relative z-10">
         <Reveal>
           <div className="text-center max-w-3xl mx-auto">
-            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-white/5 border border-white/10 text-white/80 mb-4">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-              Next-Gen Connectivity
-            </span>
             <h2 className="hero-title text-4xl sm:text-5xl md:text-6xl font-medium tracking-tight">
               {data.title}
             </h2>
