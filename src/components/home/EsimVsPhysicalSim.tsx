@@ -82,7 +82,7 @@ export function EsimVsPhysicalSim() {
                   </p>
                 </div>
 
-                {/* Animated Lightweight eSIM Chip Diagram */}
+                {/* Clean eSIM Chip Diagram */}
                 <div className="relative w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0">
                   <svg
                     className="w-8 h-8 text-emerald-400"
@@ -92,19 +92,12 @@ export function EsimVsPhysicalSim() {
                     strokeWidth="1.5"
                   >
                     {/* Chip outline */}
-                    <rect x="5" y="4" width="14" height="16" rx="3" />
-                    {/* Golden contacts */}
-                    <path d="M9 8h6v4H9z" fill="currentColor" fillOpacity="0.2" />
-                    <path d="M9 8h6v4H9z" />
-                    {/* Radio wave signals */}
-                    <path
-                      d="M17 6c1.5 1.5 1.5 4 0 5.5"
-                      strokeLinecap="round"
-                    />
-                    <path
-                      d="M19 4c2.5 2.5 2.5 7 0 9.5"
-                      strokeLinecap="round"
-                    />
+                    <rect x="4" y="3" width="16" height="18" rx="3" />
+                    {/* Golden contacts grid */}
+                    <path d="M8 7h8v10H8z" fill="currentColor" fillOpacity="0.15" />
+                    <rect x="8" y="7" width="8" height="10" rx="1" strokeWidth="1.5" />
+                    <line x1="8" y1="12" x2="16" y2="12" strokeWidth="1.5" />
+                    <line x1="12" y1="7" x2="12" y2="17" strokeWidth="1.5" />
                   </svg>
                 </div>
               </div>
@@ -139,9 +132,9 @@ export function EsimVsPhysicalSim() {
                 </span>
                 <Link
                   href="/destinations"
-                  className="bg-white text-black hover:bg-neutral-200 text-xs font-semibold px-5 py-2.5 rounded-full transition-colors btn-press inline-flex items-center gap-1.5"
+                  className="bg-white text-black hover:bg-neutral-200 text-xs font-semibold px-5 py-2.5 rounded-full transition-colors btn-press inline-flex items-center"
                 >
-                  Browse Plans →
+                  Browse Plans
                 </Link>
               </div>
             </div>
@@ -231,11 +224,12 @@ export function EsimVsPhysicalSim() {
               {/* Animated Interactive Graphic */}
               <div className="w-full md:w-auto flex-1 max-w-lg bg-black/60 rounded-2xl p-6 border border-white/10 relative">
                 <div className="flex items-center justify-between gap-4">
-                  {/* Tower Icon */}
+                  {/* 5G Tower Icon */}
                   <div className="flex flex-col items-center gap-1.5 shrink-0">
                     <div className="w-12 h-12 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400">
-                      <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M12 2v20M8 6l8 0M6 10l12 0M4 14l16 0M2 18l20 0" strokeLinecap="round" />
+                      <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
+                        <path d="M12 2v20M7 22l5-16 5 16M9 16h6M10 11h4" strokeLinecap="round" strokeLinejoin="round" />
+                        <path d="M5 8a9 9 0 0 1 14 0M8 11a5 5 0 0 1 8 0" strokeLinecap="round" />
                       </svg>
                     </div>
                     <span className="text-[11px] text-white/60 font-medium">Local 5G Tower</span>

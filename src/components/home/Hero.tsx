@@ -1,20 +1,56 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 
 const HEADLINE_SIZE = "text-[clamp(3.4rem,min(14vw,24vh),13rem)]";
 
 export function Hero() {
   const { t } = useLanguage();
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    // Immediate play attempt
+    video.play().catch(() => {});
+
+    // WeChat In-App Browser AutoPlay JSBridge Handler
+    const playWeChat = () => {
+      video.play().catch(() => {});
+    };
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if (typeof (window as any).WeixinJSBridge === "object") {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (window as any).WeixinJSBridge.invoke("getNetworkType", {}, playWeChat);
+    } else {
+      document.addEventListener("WeixinJSBridgeReady", playWeChat, false);
+    }
+
+    return () => {
+      document.removeEventListener("WeixinJSBridgeReady", playWeChat);
+    };
+  }, []);
 
   return (
     <section className="relative w-full overflow-hidden bg-black h-[100svh] min-h-[560px] max-h-[1200px]">
       <video
+        ref={videoRef}
         className="absolute inset-0 w-full h-full object-cover animate-fade-in"
         autoPlay
         loop
         muted
         playsInline
+        // WeChat & X5 Engine Inline AutoPlay Attributes
+        {...{
+          "webkit-playsinline": "true",
+          "x5-playsinline": "true",
+          "x5-video-player-type": "h5-page",
+          "x5-video-player-fullscreen": "true",
+          "x5-video-orientation": "portrait",
+        }}
         src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260418_063509_7d167302-4fd4-480b-8260-18ab572333d4.mp4"
       />
       <div className="absolute inset-0 bg-black/20" />

@@ -18,9 +18,11 @@ export async function PATCH(
   const plan = await prisma.plan.findUnique({ where: { id } });
   if (!plan) return NextResponse.json({ error: "not found" }, { status: 404 });
 
-  const data: { priceUsd?: number; priceOverridden?: boolean; visible?: boolean } = {};
+  const data: { name?: string; region?: string; priceUsd?: number; priceOverridden?: boolean; visible?: boolean } = {};
 
   if (typeof body.visible === "boolean") data.visible = body.visible;
+  if (typeof body.name === "string" && body.name.trim()) data.name = body.name.trim();
+  if (typeof body.region === "string" && body.region.trim()) data.region = body.region.trim();
 
   if (body.resetPrice === true) {
     data.priceUsd = computeSellPrice(plan.costUsd);
@@ -36,6 +38,8 @@ export async function PATCH(
   const updated = await prisma.plan.update({ where: { id }, data });
   return NextResponse.json({
     id: updated.id,
+    name: updated.name,
+    region: updated.region,
     priceUsd: updated.priceUsd,
     priceOverridden: updated.priceOverridden,
     visible: updated.visible,
