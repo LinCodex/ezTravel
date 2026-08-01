@@ -6,12 +6,11 @@ export function StaggerGrid({
   children,
   className = "",
   resetKey,
-  staggerMs = 45,
+  staggerMs = 35,
   maxStagger = 16,
 }: {
   children: React.ReactNode;
   className?: string;
-  /** Change this when the list is filtered/reordered so stagger replays in order. */
   resetKey: string;
   staggerMs?: number;
   maxStagger?: number;
@@ -29,7 +28,7 @@ export function StaggerGrid({
     }
 
     const rect = el.getBoundingClientRect();
-    if (rect.top > window.innerHeight * 1.2) {
+    if (rect.top > window.innerHeight * 1.5) {
       setActive(false);
 
       const observer = new IntersectionObserver(
@@ -39,13 +38,13 @@ export function StaggerGrid({
             observer.disconnect();
           }
         },
-        { threshold: 0.01, rootMargin: "350px 0px 350px 0px" }
+        { threshold: 0.01, rootMargin: "400px 0px 400px 0px" }
       );
       observer.observe(el);
 
       const timer = setTimeout(() => {
         setActive(true);
-      }, 300);
+      }, 150);
 
       return () => {
         clearTimeout(timer);
@@ -63,8 +62,8 @@ export function StaggerGrid({
       {items.map((child, i) => (
         <div
           key={isValidElement(child) && child.key != null ? String(child.key) : i}
-          className={`transition-all duration-400 ease-out ${
-            active ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
+          className={`transition-all duration-350 ease-out ${
+            active ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"
           }`}
           style={
             {

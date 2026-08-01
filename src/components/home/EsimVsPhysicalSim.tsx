@@ -57,96 +57,91 @@ export function EsimVsPhysicalSim() {
         {/* Cards Comparison Container */}
         <div className="grid md:grid-cols-2 gap-6 md:gap-8 mt-12 md:mt-16">
           {/* ezTravel eSIM Card */}
-          <Reveal delay={100}>
-            <div
-              className={`h-full rounded-3xl p-6 sm:p-8 bg-gradient-to-b from-neutral-900/90 to-neutral-950/90 border transition-all duration-300 relative group ${
-                activeTab === "esim" ? "block" : "hidden sm:block"
-              } border-emerald-500/30 hover:border-emerald-500/60 shadow-[0_0_50px_-12px_rgba(16,185,129,0.15)]`}
-            >
-              {/* Badge */}
-              <div className="absolute -top-3 right-6 bg-gradient-to-r from-emerald-400 to-teal-500 text-black text-xs font-semibold px-4 py-1 rounded-full shadow-lg flex items-center gap-1.5">
-                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                </svg>
-                {data.badgeRecommended}
-              </div>
-
-              {/* Card Header & SVG Diagram */}
-              <div className="flex items-start justify-between gap-4 mb-6">
-                <div>
-                  <h3 className="text-2xl font-semibold text-white flex items-center gap-2">
-                    {data.esimTitle}
-                  </h3>
-                  <p className="text-emerald-400/90 text-sm mt-1">
-                    {data.esimSubtitle}
-                  </p>
-                </div>
-
-                {/* Clean eSIM Chip Diagram */}
-                <div className="relative w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0">
-                  <svg
-                    className="w-8 h-8 text-emerald-400"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                  >
-                    {/* Chip outline */}
-                    <rect x="4" y="3" width="16" height="18" rx="3" />
-                    {/* Golden contacts grid */}
-                    <path d="M8 7h8v10H8z" fill="currentColor" fillOpacity="0.15" />
-                    <rect x="8" y="7" width="8" height="10" rx="1" strokeWidth="1.5" />
-                    <line x1="8" y1="12" x2="16" y2="12" strokeWidth="1.5" />
-                    <line x1="12" y1="7" x2="12" y2="17" strokeWidth="1.5" />
+          <div className={activeTab === "esim" ? "block" : "hidden sm:block"}>
+            <Reveal delay={100}>
+              <div className="h-full rounded-3xl p-6 sm:p-8 bg-gradient-to-b from-neutral-900/90 to-neutral-950/90 border border-emerald-500/30 hover:border-emerald-500/60 shadow-[0_0_50px_-12px_rgba(16,185,129,0.15)] transition-all duration-300 relative group">
+                {/* Badge */}
+                <div className="absolute -top-3 right-6 bg-gradient-to-r from-emerald-400 to-teal-500 text-black text-xs font-semibold px-4 py-1 rounded-full shadow-lg flex items-center gap-1.5">
+                  <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                   </svg>
+                  {data.badgeRecommended}
+                </div>
+
+                {/* Card Header & SVG Diagram */}
+                <div className="flex items-start justify-between gap-4 mb-6">
+                  <div>
+                    <h3 className="text-2xl font-semibold text-white flex items-center gap-2">
+                      {data.esimTitle}
+                    </h3>
+                    <p className="text-emerald-400/90 text-sm mt-1">
+                      {data.esimSubtitle}
+                    </p>
+                  </div>
+
+                  {/* Clean eSIM Chip Diagram */}
+                  <div className="relative w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0">
+                    <svg
+                      className="w-8 h-8 text-emerald-400"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                    >
+                      {/* Chip outline */}
+                      <rect x="4" y="3" width="16" height="18" rx="3" />
+                      {/* Golden contacts grid */}
+                      <path d="M8 7h8v10H8z" fill="currentColor" fillOpacity="0.15" />
+                      <rect x="8" y="7" width="8" height="10" rx="1" strokeWidth="1.5" />
+                      <line x1="8" y1="12" x2="16" y2="12" strokeWidth="1.5" />
+                      <line x1="12" y1="7" x2="12" y2="17" strokeWidth="1.5" />
+                    </svg>
+                  </div>
+                </div>
+
+                {/* Feature Points */}
+                <ul className="space-y-4">
+                  {data.features.map((f, i) => (
+                    <li
+                      key={i}
+                      className="flex items-start gap-3 p-3.5 rounded-2xl bg-white/[0.03] border border-white/5 group-hover:border-emerald-500/20 transition-colors"
+                    >
+                      <div className="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
+                        <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                          <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </div>
+                      <div>
+                        <span className="text-white/40 text-xs uppercase tracking-wider block font-medium">
+                          {f.label}
+                        </span>
+                        <span className="text-white text-sm font-medium mt-0.5 block">
+                          {f.esim}
+                        </span>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+
+                <div className="mt-8 pt-6 border-t border-white/10 flex items-center justify-between">
+                  <span className="text-white/50 text-xs">
+                    Zero roaming fees · Instant activation
+                  </span>
+                  <Link
+                    href="/destinations"
+                    className="bg-white text-black hover:bg-neutral-200 text-xs font-semibold px-5 py-2.5 rounded-full transition-colors btn-press inline-flex items-center"
+                  >
+                    Browse Plans
+                  </Link>
                 </div>
               </div>
-
-              {/* Feature Points */}
-              <ul className="space-y-4">
-                {data.features.map((f, i) => (
-                  <li
-                    key={i}
-                    className="flex items-start gap-3 p-3.5 rounded-2xl bg-white/[0.03] border border-white/5 group-hover:border-emerald-500/20 transition-colors"
-                  >
-                    <div className="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
-                      <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                        <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                    </div>
-                    <div>
-                      <span className="text-white/40 text-xs uppercase tracking-wider block font-medium">
-                        {f.label}
-                      </span>
-                      <span className="text-white text-sm font-medium mt-0.5 block">
-                        {f.esim}
-                      </span>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-
-              <div className="mt-8 pt-6 border-t border-white/10 flex items-center justify-between">
-                <span className="text-white/50 text-xs">
-                  Zero roaming fees · Instant activation
-                </span>
-                <Link
-                  href="/destinations"
-                  className="bg-white text-black hover:bg-neutral-200 text-xs font-semibold px-5 py-2.5 rounded-full transition-colors btn-press inline-flex items-center"
-                >
-                  Browse Plans
-                </Link>
-              </div>
-            </div>
-          </Reveal>
+            </Reveal>
+          </div>
 
           {/* Traditional Physical SIM Card */}
-          <Reveal delay={200}>
-            <div
-              className={`h-full rounded-3xl p-6 sm:p-8 bg-neutral-950/70 border border-white/10 transition-all duration-300 relative ${
-                activeTab === "trad" ? "block" : "hidden sm:block"
-              }`}
-            >
+          <div className={activeTab === "trad" ? "block" : "hidden sm:block"}>
+            <Reveal delay={200}>
+              <div className="h-full rounded-3xl p-6 sm:p-8 bg-neutral-950/70 border border-white/10 transition-all duration-300 relative">
               {/* Card Header & SVG Diagram */}
               <div className="flex items-start justify-between gap-4 mb-6">
                 <div>
@@ -207,6 +202,7 @@ export function EsimVsPhysicalSim() {
             </div>
           </Reveal>
         </div>
+      </div>
 
         {/* Lightweight Animated Signal Diagram Component */}
         <Reveal delay={300}>
