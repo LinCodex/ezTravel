@@ -29,9 +29,8 @@ export function StaggerGrid({
     if (!el) return;
 
     const rect = el.getBoundingClientRect();
-    const alreadyInView = rect.top < window.innerHeight * 0.9 && rect.bottom > 0;
+    const alreadyInView = rect.top < window.innerHeight * 1.2 && rect.bottom > -200;
     if (alreadyInView) {
-      // Double rAF so the browser paints the hidden state before transitioning.
       let id2 = 0;
       const id1 = requestAnimationFrame(() => {
         id2 = requestAnimationFrame(() => setActive(true));
@@ -42,17 +41,25 @@ export function StaggerGrid({
       };
     }
 
+    const fallbackTimer = setTimeout(() => {
+      setActive(true);
+    }, 500);
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
           setActive(true);
+          clearTimeout(fallbackTimer);
           observer.disconnect();
         }
       },
-      { threshold: 0.04, rootMargin: "0px 0px -6% 0px" }
+      { threshold: 0.01, rootMargin: "300px 0px 300px 0px" }
     );
     observer.observe(el);
-    return () => observer.disconnect();
+    return () => {
+      clearTimeout(fallbackTimer);
+      observer.disconnect();
+    };
   }, [resetKey]);
 
   const items = Children.toArray(children);

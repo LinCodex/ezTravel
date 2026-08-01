@@ -630,7 +630,7 @@ export function RegionPlans({
 
       {/* Sticky mobile buy bar */}
       {stickyPlan && (
-        <div className="fixed bottom-0 inset-x-0 z-40 md:hidden border-t border-white/10 bg-black/95 backdrop-blur-xl px-4 py-3 safe-area-pb">
+        <div className="fixed bottom-0 inset-x-0 z-30 md:hidden border-t border-white/10 bg-black/95 backdrop-blur-xl px-4 py-3 safe-area-pb">
           <div className="flex items-center justify-between gap-3 max-w-lg mx-auto">
             <div className="min-w-0">
               <p className="text-white text-sm font-medium truncate">

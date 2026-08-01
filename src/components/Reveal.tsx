@@ -24,10 +24,10 @@ export function Reveal({
     if (!el) return;
 
     const rect = el.getBoundingClientRect();
-    const inView = rect.top < window.innerHeight * 0.92 && rect.bottom > -40;
+    const inView = rect.top < window.innerHeight * 1.2 && rect.bottom > -200;
 
     if (inView) {
-      // Already on screen — keep visible, optionally replay a soft entrance.
+      // Already on screen or near viewport — keep visible.
       setAnimate(true);
       setVisible(true);
       return;
@@ -37,17 +37,26 @@ export function Reveal({
     setVisible(false);
     setAnimate(true);
 
+    // Fallback timer: ensure content NEVER stays hidden on mobile fast scrolling
+    const fallbackTimer = setTimeout(() => {
+      setVisible(true);
+    }, 500);
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
           setVisible(true);
+          clearTimeout(fallbackTimer);
           observer.disconnect();
         }
       },
-      { threshold: 0.05, rootMargin: "0px 0px -5% 0px" }
+      { threshold: 0.01, rootMargin: "300px 0px 300px 0px" }
     );
     observer.observe(el);
-    return () => observer.disconnect();
+    return () => {
+      clearTimeout(fallbackTimer);
+      observer.disconnect();
+    };
   }, []);
 
   return (

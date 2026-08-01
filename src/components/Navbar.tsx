@@ -42,7 +42,7 @@ export function Navbar() {
   return (
     <>
       <nav
-        className={`fixed top-0 left-0 right-0 z-50 px-4 md:px-10 pt-4 md:pt-6 flex items-center justify-between gap-2 transition-all duration-500 ${
+        className={`fixed top-0 left-0 right-0 z-[100] px-4 md:px-10 pt-4 md:pt-6 flex items-center justify-between gap-2 transition-all duration-500 ${
           scrolled ? "translate-y-[-4px]" : ""
         }`}
       >
@@ -132,7 +132,7 @@ export function Navbar() {
       </nav>
 
       <div
-        className={`fixed inset-0 z-40 lg:hidden transition-all duration-500 ${
+        className={`fixed inset-0 z-[90] lg:hidden transition-all duration-500 ${
           open ? "visible opacity-100" : "invisible opacity-0 pointer-events-none"
         }`}
       >
