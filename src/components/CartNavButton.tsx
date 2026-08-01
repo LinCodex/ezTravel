@@ -28,7 +28,7 @@ function CartIcon({ className = "" }: { className?: string }) {
 
 export function CartNavButton({ scrolled }: { scrolled: boolean }) {
   const { t, locale } = useLanguage();
-  const { items, count, subtotal } = useCart();
+  const { items, count, subtotal, clear } = useCart();
   const [open, setOpen] = useState(false);
 
   return (
@@ -66,9 +66,24 @@ export function CartNavButton({ scrolled }: { scrolled: boolean }) {
         <div className="rounded-2xl bg-neutral-950/95 backdrop-blur-xl ring-1 ring-white/15 shadow-2xl shadow-black/50 overflow-hidden">
           <div className="px-4 py-3 border-b border-white/10 flex items-center justify-between gap-3">
             <p className="text-white text-sm font-medium">{t.cart.title}</p>
-            <p className="text-white/40 text-xs">
-              {count} {t.cart.items}
-            </p>
+            <div className="flex items-center gap-2.5">
+              {items.length > 0 && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    clear();
+                  }}
+                  className="text-red-400/80 hover:text-red-400 text-xs transition-colors"
+                >
+                  {t.cart.clearCart}
+                </button>
+              )}
+              <p className="text-white/40 text-xs">
+                {count} {t.cart.items}
+              </p>
+            </div>
           </div>
 
           {items.length === 0 ? (

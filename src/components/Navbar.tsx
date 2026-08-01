@@ -57,7 +57,7 @@ export function Navbar() {
             <AnimatedLangText>
               {t.brand}
               {locale === "zh" && (
-                <span className="ml-1.5 text-neutral-400 hidden xs:inline sm:inline">
+                <span className="ml-1.5 text-neutral-400 font-normal">
                   {t.brandZh}
                 </span>
               )}

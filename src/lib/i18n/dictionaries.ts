@@ -228,6 +228,7 @@ const en = {
     items: "items",
     each: "each",
     viewCart: "view cart",
+    clearCart: "clear cart",
   },
   trust: {
     items: [
@@ -696,6 +697,7 @@ const zh: typeof en = {
     items: "件商品",
     each: "单价",
     viewCart: "查看购物车",
+    clearCart: "清空购物车",
   },
   trust: {
     items: ["出发前即可安装", "保留美国号码", "无法安装可退款", "中英双语客服"],

@@ -92,9 +92,20 @@ export function CartContent() {
   return (
     <section className="px-5 md:px-10 pt-28 md:pt-32 pb-16 md:pb-20 flex-1">
       <div className="max-w-3xl mx-auto">
-        <h1 className="hero-title text-4xl sm:text-5xl md:text-6xl font-medium animate-fade-up">
-          {t.cart.title}
-        </h1>
+        <div className="flex items-center justify-between gap-4 animate-fade-up">
+          <h1 className="hero-title text-4xl sm:text-5xl md:text-6xl font-medium">
+            {t.cart.title}
+          </h1>
+          {items.length > 0 && (
+            <button
+              type="button"
+              onClick={clear}
+              className="text-red-400/80 hover:text-red-400 text-xs sm:text-sm font-medium border border-red-500/20 bg-red-500/10 rounded-full px-4 py-1.5 transition-colors"
+            >
+              {t.cart.clearCart}
+            </button>
+          )}
+        </div>
         <p className="text-white/60 text-sm mt-3 animate-fade-up delay-100">
           {t.cart.subtitle}
         </p>
