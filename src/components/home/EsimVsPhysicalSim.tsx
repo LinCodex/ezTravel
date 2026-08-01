@@ -99,13 +99,10 @@ export function EsimVsPhysicalSim() {
                     {/* Radio wave signals */}
                     <path
                       d="M17 6c1.5 1.5 1.5 4 0 5.5"
-                      className="animate-pulse"
                       strokeLinecap="round"
                     />
                     <path
                       d="M19 4c2.5 2.5 2.5 7 0 9.5"
-                      className="animate-pulse"
-                      style={{ animationDelay: "300ms" }}
                       strokeLinecap="round"
                     />
                   </svg>

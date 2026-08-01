@@ -117,7 +117,6 @@ export function WhyUs() {
       <rect x="5" y="2" width="14" height="20" rx="3" />
       <path d="M12 18h.01" strokeWidth="3" strokeLinecap="round" />
       <path d="M9 7h6M9 10h6" strokeLinecap="round" />
-      <circle cx="17" cy="6" r="3" className="fill-emerald-400 stroke-none animate-pulse" />
     </svg>,
     // 03 Pay your way
     <svg key="2" className="w-6 h-6 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
