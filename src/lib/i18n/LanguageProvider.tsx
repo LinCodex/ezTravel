@@ -38,6 +38,14 @@ export function LanguageProvider({
 
 export function useLanguage(): LanguageContextValue {
   const ctx = useContext(LanguageContext);
-  if (!ctx) throw new Error("useLanguage must be used inside LanguageProvider");
+  // During Turbopack Fast Refresh, client modules can briefly desync and lose
+  // the provider instance. Prefer a safe English fallback over crashing the tree.
+  if (!ctx) {
+    return {
+      locale: "en",
+      t: dictionaries.en,
+      setLocale: () => {},
+    };
+  }
   return ctx;
 }
