@@ -8,6 +8,8 @@ import { Logo } from "./Logo";
 import { useCart } from "@/lib/cart/CartProvider";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 
+import { AnimatedLangText } from "@/lib/i18n/AnimatedLangText";
+
 export function Navbar() {
   const { t, locale, setLocale } = useLanguage();
   const { count } = useCart();
@@ -46,23 +48,25 @@ export function Navbar() {
       >
         <Link
           href="/"
-          className={`flex items-center gap-2 backdrop-blur rounded-full pl-4 pr-5 py-3 transition-colors duration-500 ${
+          className={`flex items-center gap-2 backdrop-blur rounded-full pl-4 pr-5 py-3 smooth-morph ${
             scrolled ? "bg-black/85 ring-1 ring-white/10" : "bg-neutral-900/90"
           }`}
         >
           <Logo />
-          <span className="text-white text-sm font-normal tracking-tight whitespace-nowrap">
-            {t.brand}
-            {locale === "zh" && (
-              <span className="ml-1.5 text-neutral-400 hidden xs:inline sm:inline">
-                {t.brandZh}
-              </span>
-            )}
+          <span className="text-white text-sm font-normal tracking-tight whitespace-nowrap overflow-hidden">
+            <AnimatedLangText>
+              {t.brand}
+              {locale === "zh" && (
+                <span className="ml-1.5 text-neutral-400 hidden xs:inline sm:inline">
+                  {t.brandZh}
+                </span>
+              )}
+            </AnimatedLangText>
           </span>
         </Link>
 
         <div
-          className={`hidden lg:flex items-center gap-1 backdrop-blur rounded-full px-3 py-2 transition-all duration-500 lg:absolute lg:left-1/2 lg:-translate-x-1/2 lg:top-4 md:lg:top-6 ${
+          className={`hidden lg:flex items-center gap-1 backdrop-blur rounded-full px-3 py-2 lg:absolute lg:left-1/2 lg:-translate-x-1/2 lg:top-4 md:lg:top-6 smooth-morph ${
             scrolled ? "bg-black/85 ring-1 ring-white/10 shadow-2xl" : "bg-neutral-900/90 shadow-lg"
           }`}
         >
@@ -70,13 +74,13 @@ export function Navbar() {
             <Link
               key={l.href}
               href={l.href}
-              className={`transition-colors text-sm px-5 py-2 rounded-full ${
+              className={`transition-colors text-sm px-5 py-2 rounded-full whitespace-nowrap overflow-hidden smooth-morph ${
                 pathname.startsWith(l.href)
                   ? "text-white bg-white/10 font-medium"
                   : "text-neutral-300 hover:text-white"
               }`}
             >
-              {l.label}
+              <AnimatedLangText>{l.label}</AnimatedLangText>
             </Link>
           ))}
         </div>
@@ -84,18 +88,18 @@ export function Navbar() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setLocale(locale === "en" ? "zh" : "en")}
-            className={`backdrop-blur text-neutral-300 hover:text-white transition-colors text-sm rounded-full px-4 py-3 btn-press ${
+            className={`backdrop-blur text-neutral-300 hover:text-white text-sm rounded-full px-4 py-3 btn-press smooth-morph overflow-hidden ${
               scrolled ? "bg-black/85 ring-1 ring-white/10" : "bg-neutral-900/90"
             }`}
             aria-label="switch language"
           >
-            {locale === "en" ? "中文" : "EN"}
+            <AnimatedLangText>{locale === "en" ? "中文" : "EN"}</AnimatedLangText>
           </button>
           <Link
             href="/destinations"
-            className="hidden md:inline-block bg-white text-black text-sm font-normal rounded-full px-6 py-3 hover:bg-neutral-200 transition-colors whitespace-nowrap btn-press"
+            className="hidden md:inline-block bg-white text-black text-sm font-normal rounded-full px-6 py-3 hover:bg-neutral-200 whitespace-nowrap btn-press smooth-morph overflow-hidden"
           >
-            {t.nav.browsePlans}
+            <AnimatedLangText>{t.nav.browsePlans}</AnimatedLangText>
           </Link>
           <CartNavButton scrolled={scrolled} />
           <button
@@ -143,7 +147,7 @@ export function Navbar() {
               }`}
               style={{ transitionDelay: open ? `${120 + i * 70}ms` : "0ms" }}
             >
-              {l.label}
+              <AnimatedLangText>{l.label}</AnimatedLangText>
             </Link>
           ))}
           <div
@@ -154,22 +158,24 @@ export function Navbar() {
           >
             <Link
               href="/destinations"
-              className="bg-white text-black text-sm text-center rounded-full px-6 py-4 hover:bg-neutral-200 transition-colors btn-press"
+              className="bg-white text-black text-sm text-center rounded-full px-6 py-4 hover:bg-neutral-200 transition-colors btn-press smooth-morph overflow-hidden"
             >
-              {t.nav.browsePlans}
+              <AnimatedLangText>{t.nav.browsePlans}</AnimatedLangText>
             </Link>
             <Link
               href="/cart"
-              className="text-white/80 hover:text-white text-sm text-center py-2 transition-colors"
+              className="text-white/80 hover:text-white text-sm text-center py-2 transition-colors smooth-morph overflow-hidden"
             >
-              {t.nav.cart}
-              {count > 0 ? ` (${count})` : ""}
+              <AnimatedLangText>
+                {t.nav.cart}
+                {count > 0 ? ` (${count})` : ""}
+              </AnimatedLangText>
             </Link>
             <Link
               href="/order"
-              className="text-white/60 hover:text-white text-sm text-center py-2 transition-colors"
+              className="text-white/60 hover:text-white text-sm text-center py-2 transition-colors smooth-morph overflow-hidden"
             >
-              {t.nav.findOrder}
+              <AnimatedLangText>{t.nav.findOrder}</AnimatedLangText>
             </Link>
           </div>
         </div>
