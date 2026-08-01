@@ -93,6 +93,42 @@ const en = {
     footerGlobal: "global esims",
     footerWhatIsEsim: "what is an esim?",
   },
+  esimVsSim: {
+    title: "esim vs traditional sim",
+    subtitle: "why modern travelers are ditching plastic cards for digital data",
+    esimTitle: "ezTravel eSIM",
+    esimSubtitle: "Digital, instant & dual-SIM active",
+    tradTitle: "Traditional SIM Card",
+    tradSubtitle: "Plastic cards, ejector pins & airport queues",
+    features: [
+      {
+        label: "Setup Time",
+        esim: "Instant (< 1 minute via QR code)",
+        trad: "30-60 min waiting in airport lines",
+      },
+      {
+        label: "Keep US Number",
+        esim: "Active side-by-side (Dual SIM)",
+        trad: "Must remove & risk losing physical SIM",
+      },
+      {
+        label: "Delivery",
+        esim: "Instant screen & email QR code",
+        trad: "Physical shipping or kiosk pickup",
+      },
+      {
+        label: "Rates & Cost",
+        esim: "Local rates from $0.99/day",
+        trad: "$10+/day daily carrier roaming fees",
+      },
+      {
+        label: "Convenience",
+        esim: "Switch plans in 1 tap anytime",
+        trad: "Requires tiny pin & plastic card swap",
+      },
+    ],
+    badgeRecommended: "Next-Gen Choice",
+  },
   browse: {
     title: "destinations",
     subtitle: "search 200+ destinations, regional bundles and global plans",
@@ -529,6 +565,42 @@ const zh: typeof en = {
     footerRegional: "多国套餐",
     footerGlobal: "全球eSIM",
     footerWhatIsEsim: "什么是eSIM？",
+  },
+  esimVsSim: {
+    title: "eSIM 对比 传统实体SIM卡",
+    subtitle: "为什么越来越多旅行者选择淘汰塑料SIM卡",
+    esimTitle: "ezTravel eSIM",
+    esimSubtitle: "数字化、即时到账、保留原号",
+    tradTitle: "传统实体SIM卡",
+    tradSubtitle: "塑料小卡、取卡针、机场排队",
+    features: [
+      {
+        label: "设置时间",
+        esim: "秒级安装（扫码不到1分钟）",
+        trad: "30-60分钟（机场排队开卡）",
+      },
+      {
+        label: "保留美国号码",
+        esim: "双卡双待，接电话收短信两不误",
+        trad: "必须拔出原卡，极其容易保管不当丢失",
+      },
+      {
+        label: "发货方式",
+        esim: "即时显示二维码及邮件到账",
+        trad: "等待快递或目的地柜台领取",
+      },
+      {
+        label: "漫游资费",
+        esim: "当地原生资费，低至$0.99/天",
+        trad: "运营商高昂漫游费（每日$10+）",
+      },
+      {
+        label: "便捷程度",
+        esim: "手机上随时一键切换套餐",
+        trad: "需要取卡针和塑料卡片繁琐替换",
+      },
+    ],
+    badgeRecommended: "新一代旅行首选",
   },
   browse: {
     title: "目的地",

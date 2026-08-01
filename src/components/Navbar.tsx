@@ -62,8 +62,8 @@ export function Navbar() {
         </Link>
 
         <div
-          className={`hidden lg:flex items-center gap-1 backdrop-blur rounded-full px-3 py-2 transition-colors duration-500 ${
-            scrolled ? "bg-black/85 ring-1 ring-white/10" : "bg-neutral-900/90"
+          className={`hidden lg:flex items-center gap-1 backdrop-blur rounded-full px-3 py-2 transition-all duration-500 lg:absolute lg:left-1/2 lg:-translate-x-1/2 lg:top-4 md:lg:top-6 ${
+            scrolled ? "bg-black/85 ring-1 ring-white/10 shadow-2xl" : "bg-neutral-900/90 shadow-lg"
           }`}
         >
           {links.map((l) => (
@@ -72,7 +72,7 @@ export function Navbar() {
               href={l.href}
               className={`transition-colors text-sm px-5 py-2 rounded-full ${
                 pathname.startsWith(l.href)
-                  ? "text-white bg-white/10"
+                  ? "text-white bg-white/10 font-medium"
                   : "text-neutral-300 hover:text-white"
               }`}
             >

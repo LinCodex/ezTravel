@@ -9,9 +9,8 @@ import {
   WhyUs,
   type DestinationSummary,
 } from "@/components/home/HomeSections";
+import { EsimVsPhysicalSim } from "@/components/home/EsimVsPhysicalSim";
 import { Footer } from "@/components/Footer";
-
-export const dynamic = "force-dynamic";
 
 const FEATURED = [
   "China mainland",
@@ -60,6 +59,7 @@ export default async function HomePage() {
       <Navbar />
       <Hero />
       <PopularDestinations destinations={destinations} />
+      <EsimVsPhysicalSim />
       <WhyUs />
       <Reviews />
       <PaymentMethods />
