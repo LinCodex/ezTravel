@@ -1,0 +1,58 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Plan {
+  id              String  @id // supplier packageCode, e.g. P92TALXP9
+  slug            String
+  name            String
+  type            String // "Single" | "Multi-Area"
+  region          String
+  regionSlug      String
+  regionCode      String
+  dataType        String // "Daily Unlimited" | "Data in Total"
+  gb              Float
+  validityDays    Int
+  costUsd         Float
+  priceUsd        Float
+  priceOverridden Boolean @default(false)
+  coverage        String  @default("")
+  speed           String  @default("")
+  networks        String  @default("")
+  fupPolicy       String  @default("")
+  topUpType       String  @default("")
+  visible         Boolean @default(true)
+  orders          Order[]
+
+  @@index([regionSlug])
+  @@index([region])
+}
+
+model Order {
+  id              String    @id @default(cuid())
+  orderRef        String    @unique
+  cartGroup       String? // shared id when checkout buys multiple cart items together
+  planId          String
+  plan            Plan      @relation(fields: [planId], references: [id])
+  days            Int       @default(1) // for daily-unlimited plans: number of day passes
+  email           String
+  wechatId        String?
+  paymentMethod   String // ZELLE | WECHAT | SQUARE
+  amountUsd       Float
+  status          String    @default("AWAITING_PAYMENT") // AWAITING_CONFIRMATION | PAID | DELIVERED | CANCELLED
+  esimIccid       String?
+  esimActivation  String? // LPA activation string
+  esimSmdp        String?
+  supplierOrderNo String?
+  createdAt       DateTime  @default(now())
+  paidAt          DateTime?
+  deliveredAt     DateTime?
+
+  @@index([status])
+  @@index([cartGroup])
+}

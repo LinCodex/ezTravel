@@ -1,0 +1,77 @@
+"use client";
+
+import { Children, isValidElement, useEffect, useRef, useState } from "react";
+
+/**
+ * Reveals children in document order when the grid enters the viewport.
+ * Avoids per-card IntersectionObservers racing so lower cards don't pop in first.
+ */
+export function StaggerGrid({
+  children,
+  className = "",
+  resetKey,
+  staggerMs = 45,
+  maxStagger = 16,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  /** Change this when the list is filtered/reordered so stagger replays in order. */
+  resetKey: string;
+  staggerMs?: number;
+  maxStagger?: number;
+}) {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const [active, setActive] = useState(false);
+
+  useEffect(() => {
+    setActive(false);
+    const el = ref.current;
+    if (!el) return;
+
+    const rect = el.getBoundingClientRect();
+    const alreadyInView = rect.top < window.innerHeight * 0.9 && rect.bottom > 0;
+    if (alreadyInView) {
+      // Double rAF so the browser paints the hidden state before transitioning.
+      let id2 = 0;
+      const id1 = requestAnimationFrame(() => {
+        id2 = requestAnimationFrame(() => setActive(true));
+      });
+      return () => {
+        cancelAnimationFrame(id1);
+        cancelAnimationFrame(id2);
+      };
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setActive(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.04, rootMargin: "0px 0px -6% 0px" }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [resetKey]);
+
+  const items = Children.toArray(children);
+
+  return (
+    <div ref={ref} className={className}>
+      {items.map((child, i) => (
+        <div
+          key={isValidElement(child) && child.key != null ? String(child.key) : i}
+          className={`stagger-item ${active ? "is-visible" : ""}`}
+          style={
+            {
+              "--stagger-delay": `${Math.min(i, maxStagger) * staggerMs}ms`,
+            } as React.CSSProperties
+          }
+        >
+          {child}
+        </div>
+      ))}
+    </div>
+  );
+}
