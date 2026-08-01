@@ -78,7 +78,7 @@ export function PricingManager() {
     });
     setBusy(null);
     if (!res.ok) {
-      alert("update failed");
+      alert("Update failed");
       return;
     }
     const updated = await res.json();
@@ -120,7 +120,7 @@ export function PricingManager() {
     <div className="max-w-6xl mx-auto space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-white text-2xl font-medium hero-title">Plan Details & Pricing Configurator</h1>
+          <h1 className="text-white text-xl sm:text-2xl font-semibold hero-title">Plan Pricing & Details</h1>
           <p className="text-white/40 text-xs mt-1">
             Configure sell prices, plan names, region mappings, and visibility status
           </p>
@@ -129,123 +129,210 @@ export function PricingManager() {
           value={query}
           onChange={(e) => onSearch(e.target.value)}
           placeholder="Search plan name, region or ID..."
-          className="w-full md:w-96 bg-neutral-900 border border-white/10 rounded-full px-5 py-2.5 text-sm text-white placeholder:text-white/40 outline-none focus:ring-1 focus:ring-white/30"
+          className="w-full md:w-96 bg-neutral-900 border border-white/10 rounded-full px-4 py-2 text-xs text-white placeholder:text-white/40 outline-none focus:ring-1 focus:ring-white/30"
         />
       </div>
 
-      <div className="flex items-center justify-between text-xs text-white/40 pt-2">
+      <div className="flex items-center justify-between text-xs text-white/40">
         <span>{total} total plans in database · ● indicates custom overridden price</span>
       </div>
 
       {loading ? (
-        <div className="bg-neutral-900/40 rounded-2xl border border-white/10 p-12 text-center">
+        <div className="bg-neutral-900/40 rounded-2xl border border-white/10 p-8 text-center">
           <p className="text-white/40 text-sm">Loading plans...</p>
         </div>
       ) : (
-        <div className="overflow-x-auto border border-white/10 rounded-2xl bg-neutral-900/40">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="text-white/40 text-xs text-left border-b border-white/10 bg-white/5">
-                <th className="py-3.5 px-4 font-normal">Plan Name & Code</th>
-                <th className="py-3.5 px-4 font-normal">Region</th>
-                <th className="py-3.5 px-4 font-normal">Cost USD</th>
-                <th className="py-3.5 px-4 font-normal">Sell Price USD</th>
-                <th className="py-3.5 px-4 font-normal">Margin</th>
-                <th className="py-3.5 px-4 font-normal">Visibility</th>
-                <th className="py-3.5 px-4 font-normal text-right">Configure</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-white/5">
-              {plans.map((p) => {
-                const editValue = edits[p.id] ?? p.priceUsd.toFixed(2);
-                const changed = parseFloat(editValue) !== p.priceUsd;
-                const margin = p.priceUsd - p.costUsd;
-                return (
-                  <tr key={p.id} className={`hover:bg-white/[0.02] transition-colors ${p.visible ? "" : "opacity-45"}`}>
-                    <td className="py-3 px-4">
-                      <p className="text-white font-medium text-xs">
+        <>
+          {/* Mobile Cards View (< md) */}
+          <div className="grid grid-cols-1 gap-3 md:hidden">
+            {plans.map((p) => {
+              const editValue = edits[p.id] ?? p.priceUsd.toFixed(2);
+              const changed = parseFloat(editValue) !== p.priceUsd;
+              const margin = p.priceUsd - p.costUsd;
+
+              return (
+                <div
+                  key={p.id}
+                  className={`bg-neutral-900/80 border border-white/10 rounded-2xl p-4 space-y-3 ${
+                    p.visible ? "" : "opacity-50"
+                  }`}
+                >
+                  <div className="flex items-start justify-between gap-2 border-b border-white/10 pb-3">
+                    <div>
+                      <h3 className="text-white text-sm font-semibold flex items-center gap-1.5">
                         {p.name}
-                        {p.priceOverridden && (
-                          <span className="text-yellow-400 ml-1.5" title="price overridden">●</span>
-                        )}
+                        {p.priceOverridden && <span className="text-yellow-400 text-xs">●</span>}
+                      </h3>
+                      <p className="text-white/40 text-[11px] mt-0.5">
+                        {p.id} · {p.region}
                       </p>
-                      <p className="text-white/30 text-[11px] mt-0.5">
-                        {p.id} · {formatData(p.gb)}
-                        {p.dataType === "Daily Unlimited" ? "/day" : ` / ${p.validityDays}d`}
-                      </p>
-                    </td>
-                    <td className="py-3 px-4 text-white/70 text-xs font-medium">{p.region}</td>
-                    <td className="py-3 px-4 text-white/50 text-xs">{formatUsd(p.costUsd)}</td>
-                    <td className="py-3 px-4">
-                      <div className="flex items-center gap-2">
-                        <span className="text-white/40 text-xs">$</span>
-                        <input
-                          value={editValue}
-                          onChange={(e) =>
-                            setEdits((prev) => ({ ...prev, [p.id]: e.target.value }))
-                          }
-                          className="w-20 bg-neutral-900 border border-white/10 rounded-lg px-2.5 py-1 text-xs text-white outline-none focus:ring-1 focus:ring-white/30"
-                          inputMode="decimal"
-                        />
-                        {changed && Number.isFinite(parseFloat(editValue)) && parseFloat(editValue) > 0 && (
-                          <button
-                            onClick={() => patchPlan(p.id, { priceUsd: parseFloat(editValue) })}
-                            disabled={busy === p.id}
-                            className="bg-emerald-400 text-black text-xs font-semibold rounded-full px-3 py-1 hover:bg-emerald-300 transition-colors disabled:opacity-50"
-                          >
-                            Save
-                          </button>
-                        )}
-                        {p.priceOverridden && !changed && (
-                          <button
-                            onClick={() => patchPlan(p.id, { resetPrice: true })}
-                            disabled={busy === p.id}
-                            className="text-white/40 hover:text-white text-xs transition-colors"
-                            title="Reset to margin formula price"
-                          >
-                            Reset
-                          </button>
-                        )}
-                      </div>
-                    </td>
-                    <td className={`py-3 px-4 font-medium text-xs ${margin <= 0 ? "text-red-400" : "text-emerald-400/80"}`}>
-                      {formatUsd(margin)}
-                    </td>
-                    <td className="py-3 px-4">
-                      <button
-                        onClick={() => patchPlan(p.id, { visible: !p.visible })}
-                        disabled={busy === p.id}
-                        className={`text-xs font-medium rounded-full px-3 py-1 transition-colors ${
-                          p.visible
-                            ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30"
-                            : "bg-neutral-800 text-white/40 border border-white/10"
-                        }`}
-                      >
-                        {p.visible ? "Visible" : "Hidden"}
-                      </button>
-                    </td>
-                    <td className="py-3 px-4 text-right">
-                      <button
-                        onClick={() => openEditModal(p)}
-                        className="bg-white/5 hover:bg-white/10 border border-white/10 text-white/80 hover:text-white text-xs px-3 py-1 rounded-full transition-colors"
-                      >
-                        Edit Details
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                    </div>
+                    <button
+                      onClick={() => patchPlan(p.id, { visible: !p.visible })}
+                      disabled={busy === p.id}
+                      className={`text-[10px] font-medium px-2.5 py-1 rounded-full border ${
+                        p.visible
+                          ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/30"
+                          : "bg-neutral-800 text-white/40 border-white/10"
+                      }`}
+                    >
+                      {p.visible ? "Visible" : "Hidden"}
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 text-xs">
+                    <div>
+                      <span className="text-white/40 block">Cost Price</span>
+                      <span className="text-white/80 font-medium">{formatUsd(p.costUsd)}</span>
+                    </div>
+                    <div>
+                      <span className="text-white/40 block">Est. Margin</span>
+                      <span className={margin <= 0 ? "text-red-400 font-medium" : "text-emerald-400 font-medium"}>
+                        {formatUsd(margin)}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Inline Price Edit for Mobile */}
+                  <div className="pt-2 border-t border-white/10 flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-white/40 text-xs">$</span>
+                      <input
+                        value={editValue}
+                        onChange={(e) =>
+                          setEdits((prev) => ({ ...prev, [p.id]: e.target.value }))
+                        }
+                        className="w-20 bg-neutral-950 border border-white/10 rounded-lg px-2 py-1 text-xs text-white outline-none focus:ring-1 focus:ring-white/30"
+                        inputMode="decimal"
+                      />
+                      {changed && Number.isFinite(parseFloat(editValue)) && parseFloat(editValue) > 0 && (
+                        <button
+                          onClick={() => patchPlan(p.id, { priceUsd: parseFloat(editValue) })}
+                          disabled={busy === p.id}
+                          className="bg-emerald-400 text-black text-[11px] font-semibold px-2.5 py-1 rounded-full"
+                        >
+                          Save
+                        </button>
+                      )}
+                    </div>
+                    <button
+                      onClick={() => openEditModal(p)}
+                      className="bg-white/10 hover:bg-white/20 text-white text-xs px-3 py-1 rounded-full transition-colors"
+                    >
+                      Edit All
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Desktop Table View (>= md) */}
+          <div className="hidden md:block overflow-x-auto border border-white/10 rounded-2xl bg-neutral-900/40">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-white/40 text-xs text-left border-b border-white/10 bg-white/5">
+                  <th className="py-3.5 px-4 font-normal">Plan Name & Code</th>
+                  <th className="py-3.5 px-4 font-normal">Region</th>
+                  <th className="py-3.5 px-4 font-normal">Cost USD</th>
+                  <th className="py-3.5 px-4 font-normal">Sell Price USD</th>
+                  <th className="py-3.5 px-4 font-normal">Margin</th>
+                  <th className="py-3.5 px-4 font-normal">Visibility</th>
+                  <th className="py-3.5 px-4 font-normal text-right">Configure</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/5">
+                {plans.map((p) => {
+                  const editValue = edits[p.id] ?? p.priceUsd.toFixed(2);
+                  const changed = parseFloat(editValue) !== p.priceUsd;
+                  const margin = p.priceUsd - p.costUsd;
+                  return (
+                    <tr key={p.id} className={`hover:bg-white/[0.02] transition-colors ${p.visible ? "" : "opacity-45"}`}>
+                      <td className="py-3 px-4">
+                        <p className="text-white font-medium text-xs">
+                          {p.name}
+                          {p.priceOverridden && (
+                            <span className="text-yellow-400 ml-1.5" title="Price overridden">●</span>
+                          )}
+                        </p>
+                        <p className="text-white/30 text-[11px] mt-0.5">
+                          {p.id} · {formatData(p.gb)}
+                          {p.dataType === "Daily Unlimited" ? "/day" : ` / ${p.validityDays}d`}
+                        </p>
+                      </td>
+                      <td className="py-3 px-4 text-white/70 text-xs font-medium">{p.region}</td>
+                      <td className="py-3 px-4 text-white/50 text-xs">{formatUsd(p.costUsd)}</td>
+                      <td className="py-3 px-4">
+                        <div className="flex items-center gap-2">
+                          <span className="text-white/40 text-xs">$</span>
+                          <input
+                            value={editValue}
+                            onChange={(e) =>
+                              setEdits((prev) => ({ ...prev, [p.id]: e.target.value }))
+                            }
+                            className="w-20 bg-neutral-900 border border-white/10 rounded-lg px-2.5 py-1 text-xs text-white outline-none focus:ring-1 focus:ring-white/30"
+                            inputMode="decimal"
+                          />
+                          {changed && Number.isFinite(parseFloat(editValue)) && parseFloat(editValue) > 0 && (
+                            <button
+                              onClick={() => patchPlan(p.id, { priceUsd: parseFloat(editValue) })}
+                              disabled={busy === p.id}
+                              className="bg-emerald-400 text-black text-xs font-semibold rounded-full px-3 py-1 hover:bg-emerald-300 transition-colors disabled:opacity-50"
+                            >
+                              Save
+                            </button>
+                          )}
+                          {p.priceOverridden && !changed && (
+                            <button
+                              onClick={() => patchPlan(p.id, { resetPrice: true })}
+                              disabled={busy === p.id}
+                              className="text-white/40 hover:text-white text-xs transition-colors"
+                              title="Reset to margin formula price"
+                            >
+                              Reset
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                      <td className={`py-3 px-4 font-medium text-xs ${margin <= 0 ? "text-red-400" : "text-emerald-400/80"}`}>
+                        {formatUsd(margin)}
+                      </td>
+                      <td className="py-3 px-4">
+                        <button
+                          onClick={() => patchPlan(p.id, { visible: !p.visible })}
+                          disabled={busy === p.id}
+                          className={`text-xs font-medium rounded-full px-3 py-1 transition-colors ${
+                            p.visible
+                              ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30"
+                              : "bg-neutral-800 text-white/40 border border-white/10"
+                          }`}
+                        >
+                          {p.visible ? "Visible" : "Hidden"}
+                        </button>
+                      </td>
+                      <td className="py-3 px-4 text-right">
+                        <button
+                          onClick={() => openEditModal(p)}
+                          className="bg-white/5 hover:bg-white/10 border border-white/10 text-white/80 hover:text-white text-xs px-3 py-1 rounded-full transition-colors"
+                        >
+                          Edit Details
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
 
           {/* Pagination */}
-          <div className="flex items-center justify-between p-4 border-t border-white/10 bg-white/5">
+          <div className="flex items-center justify-between p-4 border border-white/10 rounded-2xl bg-neutral-900/40">
             <button
               onClick={() => goToPage(page - 1)}
               disabled={page <= 1}
-              className="text-white/60 hover:text-white text-xs disabled:opacity-30 transition-colors"
+              className="text-white/60 hover:text-white text-xs disabled:opacity-30 transition-colors px-3 py-1.5 rounded-full border border-white/10 bg-white/5"
             >
-              ← Previous Page
+              ← Prev
             </button>
             <span className="text-white/40 text-xs font-medium">
               Page {page} of {totalPages}
@@ -253,39 +340,39 @@ export function PricingManager() {
             <button
               onClick={() => goToPage(page + 1)}
               disabled={page >= totalPages}
-              className="text-white/60 hover:text-white text-xs disabled:opacity-30 transition-colors"
+              className="text-white/60 hover:text-white text-xs disabled:opacity-30 transition-colors px-3 py-1.5 rounded-full border border-white/10 bg-white/5"
             >
-              Next Page →
+              Next →
             </button>
           </div>
-        </div>
+        </>
       )}
 
       {/* Plan Details Configuration Modal */}
       {editingPlan && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-neutral-900 border border-white/15 rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl space-y-6">
+          <div className="bg-neutral-900 border border-white/15 rounded-3xl p-5 sm:p-8 max-w-lg w-full shadow-2xl space-y-5">
             <div className="flex items-center justify-between border-b border-white/10 pb-4">
               <div>
-                <h3 className="text-lg font-semibold text-white">Configure Plan Details</h3>
+                <h3 className="text-base sm:text-lg font-semibold text-white">Configure Plan Details</h3>
                 <p className="text-white/40 text-xs font-mono mt-0.5">{editingPlan.id}</p>
               </div>
               <button
                 onClick={() => setEditingPlan(null)}
-                className="text-white/40 hover:text-white text-lg"
+                className="text-white/40 hover:text-white text-lg p-2"
               >
                 ✕
               </button>
             </div>
 
-            <div className="space-y-4 text-sm">
+            <div className="space-y-4 text-xs sm:text-sm">
               <div>
                 <label className="block text-white/50 text-xs font-medium mb-1">Plan Display Name</label>
                 <input
                   type="text"
                   value={editForm.name}
                   onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                  className="w-full bg-black border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm outline-none focus:ring-1 focus:ring-white/30"
+                  className="w-full bg-black border border-white/10 rounded-xl px-4 py-2.5 text-white text-xs sm:text-sm outline-none focus:ring-1 focus:ring-white/30"
                 />
               </div>
 
@@ -295,7 +382,7 @@ export function PricingManager() {
                   type="text"
                   value={editForm.region}
                   onChange={(e) => setEditForm({ ...editForm, region: e.target.value })}
-                  className="w-full bg-black border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm outline-none focus:ring-1 focus:ring-white/30"
+                  className="w-full bg-black border border-white/10 rounded-xl px-4 py-2.5 text-white text-xs sm:text-sm outline-none focus:ring-1 focus:ring-white/30"
                 />
               </div>
 
@@ -306,7 +393,7 @@ export function PricingManager() {
                   step="0.01"
                   value={editForm.priceUsd}
                   onChange={(e) => setEditForm({ ...editForm, priceUsd: parseFloat(e.target.value) || 0 })}
-                  className="w-full bg-black border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm outline-none focus:ring-1 focus:ring-white/30"
+                  className="w-full bg-black border border-white/10 rounded-xl px-4 py-2.5 text-white text-xs sm:text-sm outline-none focus:ring-1 focus:ring-white/30"
                 />
               </div>
 
@@ -345,7 +432,7 @@ export function PricingManager() {
                   })
                 }
                 disabled={busy === editingPlan.id}
-                className="bg-white text-black text-xs font-semibold rounded-full px-5 py-2 hover:bg-neutral-200 transition-colors"
+                className="bg-white text-black text-xs font-semibold rounded-full px-5 py-2.5 hover:bg-neutral-200 transition-colors"
               >
                 Save Changes
               </button>

@@ -55,12 +55,10 @@ export function OrdersTable({ orders }: { orders: AdminOrder[] }) {
 
   const visible = useMemo(() => {
     return orders.filter((o) => {
-      // Filter tab
       if (filter === "pending" && o.status !== "AWAITING_CONFIRMATION") return false;
       if (filter === "delivered" && o.status !== "DELIVERED") return false;
       if (filter === "awaiting_payment" && o.status !== "AWAITING_PAYMENT") return false;
 
-      // Search query
       if (search.trim()) {
         const q = search.toLowerCase().trim();
         const matchesRef = o.orderRef.toLowerCase().includes(q);
@@ -82,7 +80,7 @@ export function OrdersTable({ orders }: { orders: AdminOrder[] }) {
     });
     setBusy(null);
     if (res.ok) router.refresh();
-    else alert("action failed");
+    else alert("Action failed");
   }
 
   function copyText(text: string, label: string) {
@@ -92,43 +90,45 @@ export function OrdersTable({ orders }: { orders: AdminOrder[] }) {
   }
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8">
-      {/* CRM Summary Metrics */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="bg-neutral-900/80 border border-white/10 rounded-2xl p-5">
-          <span className="text-white/40 text-xs uppercase tracking-wider font-medium">Delivered Revenue</span>
-          <p className="text-2xl font-semibold text-emerald-400 mt-2">{formatUsd(stats.totalRev)}</p>
+    <div className="max-w-6xl mx-auto space-y-6">
+      {/* CRM Summary Metrics Grid */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+        <div className="bg-neutral-900/80 border border-white/10 rounded-2xl p-4 sm:p-5">
+          <span className="text-white/40 text-[11px] uppercase tracking-wider font-medium block">Delivered Rev</span>
+          <p className="text-xl sm:text-2xl font-semibold text-emerald-400 mt-1 sm:mt-2">{formatUsd(stats.totalRev)}</p>
         </div>
-        <div className="bg-neutral-900/80 border border-white/10 rounded-2xl p-5">
-          <span className="text-white/40 text-xs uppercase tracking-wider font-medium">Needs Action</span>
-          <p className="text-2xl font-semibold text-yellow-400 mt-2">{stats.pendingCount}</p>
+        <div className="bg-neutral-900/80 border border-white/10 rounded-2xl p-4 sm:p-5">
+          <span className="text-white/40 text-[11px] uppercase tracking-wider font-medium block">Needs Action</span>
+          <p className="text-xl sm:text-2xl font-semibold text-yellow-400 mt-1 sm:mt-2">{stats.pendingCount}</p>
         </div>
-        <div className="bg-neutral-900/80 border border-white/10 rounded-2xl p-5">
-          <span className="text-white/40 text-xs uppercase tracking-wider font-medium">Delivered eSIMs</span>
-          <p className="text-2xl font-semibold text-white mt-2">{stats.deliveredCount}</p>
+        <div className="bg-neutral-900/80 border border-white/10 rounded-2xl p-4 sm:p-5">
+          <span className="text-white/40 text-[11px] uppercase tracking-wider font-medium block">Delivered eSIMs</span>
+          <p className="text-xl sm:text-2xl font-semibold text-white mt-1 sm:mt-2">{stats.deliveredCount}</p>
         </div>
-        <div className="bg-neutral-900/80 border border-white/10 rounded-2xl p-5">
-          <span className="text-white/40 text-xs uppercase tracking-wider font-medium">Total Customers</span>
-          <p className="text-2xl font-semibold text-blue-400 mt-2">{stats.uniqueEmails}</p>
+        <div className="bg-neutral-900/80 border border-white/10 rounded-2xl p-4 sm:p-5">
+          <span className="text-white/40 text-[11px] uppercase tracking-wider font-medium block">Customers</span>
+          <p className="text-xl sm:text-2xl font-semibold text-blue-400 mt-1 sm:mt-2">{stats.uniqueEmails}</p>
         </div>
       </div>
 
-      {/* Header & CRM Controls */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-white text-2xl font-medium hero-title">Customer Orders & CRM</h1>
-          <p className="text-white/50 text-xs mt-1">Manage orders, confirm payments, and access customer records</p>
+      {/* Header & Search Controls */}
+      <div className="flex flex-col gap-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-white text-xl sm:text-2xl font-semibold hero-title">Customer Orders</h1>
+            <p className="text-white/50 text-xs mt-0.5">Manage customer orders and confirm payments</p>
+          </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
-          {/* Search Input */}
-          <div className="relative flex-1 sm:w-64">
+        {/* Search & Filter Bar */}
+        <div className="flex flex-col sm:flex-row gap-3">
+          <div className="relative flex-1">
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search email, ref, WeChat..."
-              className="w-full bg-neutral-900 rounded-full px-4 py-2 text-xs text-white placeholder:text-white/40 outline-none focus:ring-1 focus:ring-white/30 border border-white/10"
+              className="w-full bg-neutral-900 border border-white/10 rounded-full px-4 py-2 text-xs text-white placeholder:text-white/40 outline-none focus:ring-1 focus:ring-white/30"
             />
             {search && (
               <button
@@ -140,11 +140,10 @@ export function OrdersTable({ orders }: { orders: AdminOrder[] }) {
             )}
           </div>
 
-          {/* Filter Tabs */}
-          <div className="flex items-center gap-1 bg-neutral-900 rounded-full p-1 border border-white/10">
+          <div className="flex items-center gap-1 bg-neutral-900 p-1 rounded-full border border-white/10 overflow-x-auto h-scroll">
             <button
               onClick={() => setFilter("all")}
-              className={`text-xs px-3 py-1.5 rounded-full transition-colors ${
+              className={`text-xs px-3 py-1.5 rounded-full transition-colors whitespace-nowrap ${
                 filter === "all" ? "bg-white text-black font-medium" : "text-neutral-300 hover:text-white"
               }`}
             >
@@ -152,15 +151,15 @@ export function OrdersTable({ orders }: { orders: AdminOrder[] }) {
             </button>
             <button
               onClick={() => setFilter("pending")}
-              className={`text-xs px-3 py-1.5 rounded-full transition-colors ${
+              className={`text-xs px-3 py-1.5 rounded-full transition-colors whitespace-nowrap ${
                 filter === "pending" ? "bg-yellow-400 text-black font-medium" : "text-neutral-300 hover:text-white"
               }`}
             >
-              Needs Action ({stats.pendingCount})
+              Pending ({stats.pendingCount})
             </button>
             <button
               onClick={() => setFilter("delivered")}
-              className={`text-xs px-3 py-1.5 rounded-full transition-colors ${
+              className={`text-xs px-3 py-1.5 rounded-full transition-colors whitespace-nowrap ${
                 filter === "delivered" ? "bg-emerald-400 text-black font-medium" : "text-neutral-300 hover:text-white"
               }`}
             >
@@ -171,138 +170,243 @@ export function OrdersTable({ orders }: { orders: AdminOrder[] }) {
       </div>
 
       {visible.length === 0 ? (
-        <div className="bg-neutral-900/40 rounded-2xl border border-white/10 p-12 text-center">
+        <div className="bg-neutral-900/40 rounded-2xl border border-white/10 p-8 text-center">
           <p className="text-white/40 text-sm">No matching orders found.</p>
         </div>
       ) : (
-        <div className="overflow-x-auto border border-white/10 rounded-2xl bg-neutral-900/40">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="text-white/40 text-xs text-left border-b border-white/10 bg-white/5">
-                <th className="py-3.5 px-4 font-normal">Order Ref</th>
-                <th className="py-3.5 px-4 font-normal">Plan Details</th>
-                <th className="py-3.5 px-4 font-normal">Customer CRM Info</th>
-                <th className="py-3.5 px-4 font-normal">Payment</th>
-                <th className="py-3.5 px-4 font-normal">Amount</th>
-                <th className="py-3.5 px-4 font-normal">Status</th>
-                <th className="py-3.5 px-4 font-normal">Wait Time</th>
-                <th className="py-3.5 px-4 font-normal text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-white/5">
-              {visible.map((o) => {
-                const waiting =
-                  now === null
-                    ? null
-                    : Math.floor((now - new Date(o.createdAt).getTime()) / 60000);
-                const isPending = o.status === "AWAITING_CONFIRMATION";
-                return (
-                  <tr key={o.id} className="hover:bg-white/[0.02] transition-colors">
-                    <td className="py-3.5 px-4">
+        <>
+          {/* Mobile Cards View (< md) */}
+          <div className="grid grid-cols-1 gap-3 md:hidden">
+            {visible.map((o) => {
+              const waiting =
+                now === null
+                  ? null
+                  : Math.floor((now - new Date(o.createdAt).getTime()) / 60000);
+              const isPending = o.status === "AWAITING_CONFIRMATION";
+
+              return (
+                <div
+                  key={o.id}
+                  className="bg-neutral-900/80 border border-white/10 rounded-2xl p-4 space-y-3"
+                >
+                  <div className="flex items-start justify-between gap-2 border-b border-white/10 pb-3">
+                    <div>
                       <Link
                         href={`/order/${o.orderRef}`}
                         target="_blank"
-                        className="text-emerald-400 hover:underline font-mono text-xs font-medium"
+                        className="text-emerald-400 font-mono text-xs font-semibold hover:underline"
                       >
                         {o.orderRef} ↗
                       </Link>
                       <p className="text-white/30 text-[11px] mt-0.5">
-                        {new Date(o.createdAt).toLocaleDateString()}
+                        {new Date(o.createdAt).toLocaleString()}
                       </p>
-                    </td>
-                    <td className="py-3.5 px-4 text-white/80">
-                      <p className="font-medium text-white text-xs">{o.planName}</p>
-                      <p className="text-white/40 text-xs mt-0.5">
-                        {o.region} · {o.dataType === "Daily Unlimited" ? `${o.days} Days` : "Fixed Data"}
-                      </p>
-                    </td>
-                    <td className="py-3.5 px-4">
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-white/90 text-xs font-medium">{o.email}</span>
+                    </div>
+                    <span
+                      className={`text-[10px] font-medium px-2.5 py-1 rounded-full whitespace-nowrap ${
+                        STATUS_STYLES[o.status] ?? "bg-neutral-700 text-white"
+                      }`}
+                    >
+                      {o.status.toLowerCase().replace(/_/g, " ")}
+                    </span>
+                  </div>
+
+                  <div className="space-y-1.5 text-xs">
+                    <div className="flex justify-between">
+                      <span className="text-white/40">Plan</span>
+                      <span className="text-white font-medium text-right">{o.planName} ({o.region})</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-white/40">Amount</span>
+                      <span className="text-emerald-400 font-semibold">{formatUsd(o.amountUsd)} ({o.paymentMethod})</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-white/40">Customer</span>
+                      <div className="flex items-center gap-1">
+                        <span className="text-white text-right truncate max-w-[160px]">{o.email}</span>
                         <button
-                          onClick={() => copyText(o.email, o.id + "-email")}
-                          className="text-white/30 hover:text-white text-[10px] px-1 bg-white/5 rounded"
-                          title="Copy Email"
+                          onClick={() => copyText(o.email, o.id + "-memail")}
+                          className="text-white/40 text-[10px] bg-white/10 px-1.5 py-0.5 rounded"
                         >
-                          {copied === o.id + "-email" ? "✓" : "copy"}
+                          {copied === o.id + "-memail" ? "✓" : "copy"}
                         </button>
                       </div>
-                      {o.wechatId && (
-                        <div className="flex items-center gap-1.5 mt-0.5">
-                          <span className="text-emerald-400/80 text-xs">WeChat: {o.wechatId}</span>
+                    </div>
+                    {o.wechatId && (
+                      <div className="flex justify-between items-center">
+                        <span className="text-white/40">WeChat</span>
+                        <div className="flex items-center gap-1">
+                          <span className="text-emerald-400">{o.wechatId}</span>
                           <button
-                            onClick={() => copyText(o.wechatId!, o.id + "-wechat")}
-                            className="text-white/30 hover:text-white text-[10px] px-1 bg-white/5 rounded"
-                            title="Copy WeChat ID"
+                            onClick={() => copyText(o.wechatId!, o.id + "-mwechat")}
+                            className="text-white/40 text-[10px] bg-white/10 px-1.5 py-0.5 rounded"
                           >
-                            {copied === o.id + "-wechat" ? "✓" : "copy"}
+                            {copied === o.id + "-mwechat" ? "✓" : "copy"}
                           </button>
                         </div>
-                      )}
-                    </td>
-                    <td className="py-3.5 px-4 text-white/70 text-xs uppercase font-medium">
-                      {o.paymentMethod}
-                    </td>
-                    <td className="py-3.5 px-4 text-white font-semibold text-xs">
-                      {formatUsd(o.amountUsd)}
-                    </td>
-                    <td className="py-3.5 px-4">
-                      <span
-                        className={`text-[11px] font-medium px-2.5 py-1 rounded-full whitespace-nowrap ${
-                          STATUS_STYLES[o.status] ?? "bg-neutral-700 text-white"
-                        }`}
-                      >
-                        {o.status.toLowerCase().replace(/_/g, " ")}
-                      </span>
-                    </td>
-                    <td className="py-3.5 px-4 text-xs">
-                      {isPending && waiting !== null ? (
-                        <span
-                          className={`font-semibold ${
-                            waiting >= 60 ? "text-red-400" : waiting >= 40 ? "text-yellow-400" : "text-white/60"
-                          }`}
-                        >
-                          {waiting}m
+                      </div>
+                    )}
+                    {isPending && waiting !== null && (
+                      <div className="flex justify-between">
+                        <span className="text-white/40">Waiting Time</span>
+                        <span className={waiting >= 60 ? "text-red-400 font-bold" : "text-yellow-400"}>
+                          {waiting} minutes
                         </span>
-                      ) : (
-                        <span className="text-white/30">—</span>
-                      )}
-                    </td>
-                    <td className="py-3.5 px-4 text-right">
-                      {(isPending || o.status === "AWAITING_PAYMENT") && (
-                        <div className="flex items-center justify-end gap-2">
-                          <button
-                            onClick={() => act(o.id, "confirm")}
-                            disabled={busy === o.id}
-                            className="bg-emerald-400 hover:bg-emerald-300 text-black text-xs font-semibold rounded-full px-3.5 py-1.5 transition-colors disabled:opacity-50"
-                          >
-                            {busy === o.id ? "..." : "Confirm & Send"}
-                          </button>
-                          <button
-                            onClick={() => act(o.id, "cancel")}
-                            disabled={busy === o.id}
-                            className="text-red-400 hover:text-red-300 text-xs transition-colors"
-                          >
-                            Cancel
-                          </button>
-                        </div>
-                      )}
-                      {o.status === "DELIVERED" && (
+                      </div>
+                    )}
+                  </div>
+
+                  {(isPending || o.status === "AWAITING_PAYMENT") && (
+                    <div className="pt-2 border-t border-white/10 flex gap-2">
+                      <button
+                        onClick={() => act(o.id, "confirm")}
+                        disabled={busy === o.id}
+                        className="flex-1 bg-emerald-400 text-black font-semibold text-xs py-2 rounded-full transition-colors disabled:opacity-50"
+                      >
+                        {busy === o.id ? "..." : "Confirm Payment"}
+                      </button>
+                      <button
+                        onClick={() => act(o.id, "cancel")}
+                        disabled={busy === o.id}
+                        className="px-4 text-red-400 hover:text-red-300 text-xs py-2 transition-colors border border-red-500/20 rounded-full"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Desktop Table View (>= md) */}
+          <div className="hidden md:block overflow-x-auto border border-white/10 rounded-2xl bg-neutral-900/40">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-white/40 text-xs text-left border-b border-white/10 bg-white/5">
+                  <th className="py-3.5 px-4 font-normal">Order Ref</th>
+                  <th className="py-3.5 px-4 font-normal">Plan Details</th>
+                  <th className="py-3.5 px-4 font-normal">Customer CRM Info</th>
+                  <th className="py-3.5 px-4 font-normal">Payment</th>
+                  <th className="py-3.5 px-4 font-normal">Amount</th>
+                  <th className="py-3.5 px-4 font-normal">Status</th>
+                  <th className="py-3.5 px-4 font-normal">Wait Time</th>
+                  <th className="py-3.5 px-4 font-normal text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/5">
+                {visible.map((o) => {
+                  const waiting =
+                    now === null
+                      ? null
+                      : Math.floor((now - new Date(o.createdAt).getTime()) / 60000);
+                  const isPending = o.status === "AWAITING_CONFIRMATION";
+                  return (
+                    <tr key={o.id} className="hover:bg-white/[0.02] transition-colors">
+                      <td className="py-3.5 px-4">
                         <Link
                           href={`/order/${o.orderRef}`}
                           target="_blank"
-                          className="text-white/40 hover:text-white text-xs transition-colors"
+                          className="text-emerald-400 hover:underline font-mono text-xs font-medium"
                         >
-                          View eSIM →
+                          {o.orderRef} ↗
                         </Link>
-                      )}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+                        <p className="text-white/30 text-[11px] mt-0.5">
+                          {new Date(o.createdAt).toLocaleDateString()}
+                        </p>
+                      </td>
+                      <td className="py-3.5 px-4 text-white/80">
+                        <p className="font-medium text-white text-xs">{o.planName}</p>
+                        <p className="text-white/40 text-xs mt-0.5">
+                          {o.region} · {o.dataType === "Daily Unlimited" ? `${o.days} Days` : "Fixed Data"}
+                        </p>
+                      </td>
+                      <td className="py-3.5 px-4">
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-white/90 text-xs font-medium">{o.email}</span>
+                          <button
+                            onClick={() => copyText(o.email, o.id + "-email")}
+                            className="text-white/30 hover:text-white text-[10px] px-1 bg-white/5 rounded"
+                          >
+                            {copied === o.id + "-email" ? "✓" : "copy"}
+                          </button>
+                        </div>
+                        {o.wechatId && (
+                          <div className="flex items-center gap-1.5 mt-0.5">
+                            <span className="text-emerald-400/80 text-xs">WeChat: {o.wechatId}</span>
+                            <button
+                              onClick={() => copyText(o.wechatId!, o.id + "-wechat")}
+                              className="text-white/30 hover:text-white text-[10px] px-1 bg-white/5 rounded"
+                            >
+                              {copied === o.id + "-wechat" ? "✓" : "copy"}
+                            </button>
+                          </div>
+                        )}
+                      </td>
+                      <td className="py-3.5 px-4 text-white/70 text-xs uppercase font-medium">
+                        {o.paymentMethod}
+                      </td>
+                      <td className="py-3.5 px-4 text-white font-semibold text-xs">
+                        {formatUsd(o.amountUsd)}
+                      </td>
+                      <td className="py-3.5 px-4">
+                        <span
+                          className={`text-[11px] font-medium px-2.5 py-1 rounded-full whitespace-nowrap ${
+                            STATUS_STYLES[o.status] ?? "bg-neutral-700 text-white"
+                          }`}
+                        >
+                          {o.status.toLowerCase().replace(/_/g, " ")}
+                        </span>
+                      </td>
+                      <td className="py-3.5 px-4 text-xs">
+                        {isPending && waiting !== null ? (
+                          <span
+                            className={`font-semibold ${
+                              waiting >= 60 ? "text-red-400" : waiting >= 40 ? "text-yellow-400" : "text-white/60"
+                            }`}
+                          >
+                            {waiting}m
+                          </span>
+                        ) : (
+                          <span className="text-white/30">—</span>
+                        )}
+                      </td>
+                      <td className="py-3.5 px-4 text-right">
+                        {(isPending || o.status === "AWAITING_PAYMENT") && (
+                          <div className="flex items-center justify-end gap-2">
+                            <button
+                              onClick={() => act(o.id, "confirm")}
+                              disabled={busy === o.id}
+                              className="bg-emerald-400 hover:bg-emerald-300 text-black text-xs font-semibold rounded-full px-3.5 py-1.5 transition-colors disabled:opacity-50"
+                            >
+                              {busy === o.id ? "..." : "Confirm & Send"}
+                            </button>
+                            <button
+                              onClick={() => act(o.id, "cancel")}
+                              disabled={busy === o.id}
+                              className="text-red-400 hover:text-red-300 text-xs transition-colors"
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        )}
+                        {o.status === "DELIVERED" && (
+                          <Link
+                            href={`/order/${o.orderRef}`}
+                            target="_blank"
+                            className="text-white/40 hover:text-white text-xs transition-colors"
+                          >
+                            View eSIM →
+                          </Link>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </>
       )}
     </div>
   );
