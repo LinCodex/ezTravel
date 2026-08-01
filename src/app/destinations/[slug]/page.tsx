@@ -12,10 +12,17 @@ export default async function RegionPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const plans = await prisma.plan.findMany({
-    where: { regionSlug: slug, visible: true },
-    orderBy: [{ dataType: "asc" }, { gb: "asc" }, { validityDays: "asc" }],
-  });
+
+  let plans;
+  try {
+    plans = await prisma.plan.findMany({
+      where: { regionSlug: slug, visible: true },
+      orderBy: [{ dataType: "asc" }, { gb: "asc" }, { validityDays: "asc" }],
+    });
+  } catch (error) {
+    console.error("Failed to load plans:", error);
+    notFound();
+  }
 
   if (plans.length === 0) notFound();
 

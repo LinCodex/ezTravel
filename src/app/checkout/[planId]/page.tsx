@@ -12,7 +12,14 @@ export default async function CheckoutPage({
   params: Promise<{ planId: string }>;
 }) {
   const { planId } = await params;
-  const plan = await prisma.plan.findUnique({ where: { id: planId } });
+
+  let plan;
+  try {
+    plan = await prisma.plan.findUnique({ where: { id: planId } });
+  } catch (error) {
+    console.error("Failed to load plan:", error);
+    notFound();
+  }
   if (!plan || !plan.visible) notFound();
 
   return (

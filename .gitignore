@@ -34,12 +34,11 @@ yarn-error.log*
 .env.*
 !.env.example
 
-# databases (local SQLite)
-prisma/*.db
+# databases (local SQLite) — keep journal/wal files out of version control
 prisma/*.db-journal
-prisma/*.db-*
-*.db
+prisma/*.db-wal
 *.db-journal
+*.db-wal
 
 # vercel
 .vercel

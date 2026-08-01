@@ -29,25 +29,31 @@ const FEATURED = [
 ] as const;
 
 export default async function HomePage() {
-  const grouped = await prisma.plan.groupBy({
-    by: ["region", "regionSlug"],
-    where: { visible: true, region: { in: [...FEATURED] } },
-    _min: { priceUsd: true },
-    _count: { _all: true },
-  });
+  let destinations: DestinationSummary[] = [];
 
-  const destinations: DestinationSummary[] = FEATURED.flatMap((region) => {
-    const g = grouped.find((x) => x.region === region);
-    if (!g) return [];
-    return [
-      {
-        region,
-        regionSlug: g.regionSlug,
-        minPrice: g._min.priceUsd ?? 0,
-        planCount: g._count._all,
-      },
-    ];
-  });
+  try {
+    const grouped = await prisma.plan.groupBy({
+      by: ["region", "regionSlug"],
+      where: { visible: true, region: { in: [...FEATURED] } },
+      _min: { priceUsd: true },
+      _count: { _all: true },
+    });
+
+    destinations = FEATURED.flatMap((region) => {
+      const g = grouped.find((x) => x.region === region);
+      if (!g) return [];
+      return [
+        {
+          region,
+          regionSlug: g.regionSlug,
+          minPrice: g._min.priceUsd ?? 0,
+          planCount: g._count._all,
+        },
+      ];
+    });
+  } catch (error) {
+    console.error("Failed to load destinations:", error);
+  }
 
   return (
     <main className="bg-black">
