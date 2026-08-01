@@ -2,10 +2,6 @@
 
 import { Children, isValidElement, useEffect, useRef, useState } from "react";
 
-/**
- * Reveals children in document order when the grid enters the viewport.
- * Avoids per-card IntersectionObservers racing so lower cards don't pop in first.
- */
 export function StaggerGrid({
   children,
   className = "",
@@ -21,45 +17,43 @@ export function StaggerGrid({
   maxStagger?: number;
 }) {
   const ref = useRef<HTMLDivElement | null>(null);
-  const [active, setActive] = useState(false);
+  const [active, setActive] = useState(true);
 
   useEffect(() => {
-    setActive(false);
     const el = ref.current;
     if (!el) return;
 
-    const rect = el.getBoundingClientRect();
-    const alreadyInView = rect.top < window.innerHeight * 1.2 && rect.bottom > -200;
-    if (alreadyInView) {
-      let id2 = 0;
-      const id1 = requestAnimationFrame(() => {
-        id2 = requestAnimationFrame(() => setActive(true));
-      });
-      return () => {
-        cancelAnimationFrame(id1);
-        cancelAnimationFrame(id2);
-      };
+    if (typeof IntersectionObserver === "undefined") {
+      setActive(true);
+      return;
     }
 
-    const fallbackTimer = setTimeout(() => {
-      setActive(true);
-    }, 500);
+    const rect = el.getBoundingClientRect();
+    if (rect.top > window.innerHeight * 1.2) {
+      setActive(false);
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setActive(true);
-          clearTimeout(fallbackTimer);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.01, rootMargin: "300px 0px 300px 0px" }
-    );
-    observer.observe(el);
-    return () => {
-      clearTimeout(fallbackTimer);
-      observer.disconnect();
-    };
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            setActive(true);
+            observer.disconnect();
+          }
+        },
+        { threshold: 0.01, rootMargin: "350px 0px 350px 0px" }
+      );
+      observer.observe(el);
+
+      const timer = setTimeout(() => {
+        setActive(true);
+      }, 300);
+
+      return () => {
+        clearTimeout(timer);
+        observer.disconnect();
+      };
+    } else {
+      setActive(true);
+    }
   }, [resetKey]);
 
   const items = Children.toArray(children);
@@ -69,10 +63,12 @@ export function StaggerGrid({
       {items.map((child, i) => (
         <div
           key={isValidElement(child) && child.key != null ? String(child.key) : i}
-          className={`stagger-item ${active ? "is-visible" : ""}`}
+          className={`transition-all duration-400 ease-out ${
+            active ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
+          }`}
           style={
             {
-              "--stagger-delay": `${Math.min(i, maxStagger) * staggerMs}ms`,
+              transitionDelay: active ? `${Math.min(i, maxStagger) * staggerMs}ms` : "0ms",
             } as React.CSSProperties
           }
         >
