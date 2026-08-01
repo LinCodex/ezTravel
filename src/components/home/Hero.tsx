@@ -76,11 +76,24 @@ export function Hero() {
           </p>
         </div>
 
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-fade-in delay-700">
-          <p className="text-white/50 text-[11px] tracking-widest uppercase">
-            {t.hero.scroll}
-          </p>
-          <div className="h-8 w-px bg-gradient-to-b from-white/60 to-transparent" />
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center justify-center animate-fade-in delay-700 z-10">
+          <a
+            href="#popular-destinations"
+            aria-label="scroll down"
+            className="p-2 text-white/80 hover:text-white transition-colors animate-bounce cursor-pointer"
+          >
+            <svg
+              className="w-6 h-6 sm:w-7 sm:h-7 drop-shadow-md"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M12 5v14M19 12l-7 7-7-7" />
+            </svg>
+          </a>
         </div>
       </div>
     </section>

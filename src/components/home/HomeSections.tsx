@@ -32,7 +32,7 @@ export function PopularDestinations({
   }
 
   return (
-    <section className="bg-black px-5 md:px-10 py-16 md:py-28">
+    <section id="popular-destinations" className="bg-black px-5 md:px-10 py-16 md:py-28">
       <div className="max-w-6xl mx-auto">
         <Reveal>
           <h2 className="hero-title text-4xl md:text-6xl font-medium">
