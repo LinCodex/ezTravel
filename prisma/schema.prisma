@@ -3,7 +3,8 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  // Hosted Postgres (Neon / Vercel Storage). SQLite is not supported on Vercel.
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 

@@ -2,32 +2,21 @@
 
 ## Local start
 
+Needs a Postgres `DATABASE_URL` (same Neon DB as Vercel is fine — see [production-in-3-steps.md](./production-in-3-steps.md)).
+
 ```bash
-cp .env.example .env
+cp .env.example .env   # paste Neon DATABASE_URL
 npm install
-npx prisma db push   # or: npm run db:migrate
-npm run db:seed      # import plans from data/prices.csv
-npm run partner:demo # upsert demo@partner.test / partner123
+npx prisma db push
+npm run db:prepare     # plans (if empty) + demo partner
 npm run dev
 ```
 
-Mock provisioning is on by default when `ESIMACCESS_ACCESS_CODE` is empty.
+Mock provisioning is on by default when `ESIMACCESS_ACCESS_CODE` is empty / `ESIMACCESS_USE_MOCK=1`.
 
-## Vercel / production database
+## Vercel / production
 
-**SQLite does not work on Vercel** (no persistent filesystem). Partner login, admin Partners / eSIMs / Customers will fail until you point `DATABASE_URL` at a hosted Postgres (Neon, Vercel Postgres, Supabase, etc.).
-
-1. Create a Postgres database and copy the connection string.
-2. In Vercel → Project → Settings → Environment Variables set:
-   - `DATABASE_URL` = your Postgres URL
-   - `ADMIN_USERNAME` / `ADMIN_PASSWORD` / `ADMIN_SESSION_SECRET` (≥24 chars)
-   - `PARTNER_SESSION_SECRET`
-   - `ESIMACCESS_USE_MOCK=1` (until live Access credentials)
-3. Change `prisma/schema.prisma` datasource `provider` to `"postgresql"` (and regenerate a Postgres migration), **or** start a fresh Neon project and run `prisma db push` against it from your machine with `DATABASE_URL` set.
-4. Seed demo partner: `DATABASE_URL=... npm run partner:demo`
-5. Redeploy.
-
-Until Postgres is configured, local mock logins only work on `localhost`.
+Follow **[production-in-3-steps.md](./production-in-3-steps.md)** — Storage → Neon → env vars → Redeploy. Build runs `db push` + `prepare-db` automatically.
 
 ## Deploy checklist
 

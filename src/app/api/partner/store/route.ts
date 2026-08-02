@@ -39,7 +39,7 @@ export async function GET(req: Request) {
     };
   }
   if (q) {
-    // Prefix-first + contains; SQLite LIKE is case-insensitive for ASCII
+    // Prefix-first + contains (case-insensitive via prismaTextSearch)
     where.OR = prismaTextSearch(["region", "name", "regionCode", "networks", "id"], q);
   }
 

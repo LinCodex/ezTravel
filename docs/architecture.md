@@ -8,7 +8,7 @@ flowchart TB
   partner[Partner portal]
   admin[Admin CRM]
   api[Next.js App Router API]
-  db[(SQLite / future Postgres)]
+  db[(Postgres / Neon)]
   provider[Provider layer]
   mock[mock-provider]
   access[eSIM Access Open API]

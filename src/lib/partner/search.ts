@@ -16,22 +16,23 @@ export function matchesSearch(text: string | null | undefined, q: string): boole
   return hay.startsWith(needle) || hay.includes(needle);
 }
 
+type TextFilter = { startsWith: string; mode: "insensitive" } | { contains: string; mode: "insensitive" };
+
 /**
- * Prisma OR clause for SQLite: prefix first, then contains.
- * SQLite LIKE is case-insensitive for ASCII, so no mode flag needed.
+ * Prisma OR clause for Postgres: prefix first, then contains (case-insensitive).
  */
 export function prismaTextSearch(
   fields: string[],
   q: string,
-): Array<Record<string, { startsWith: string } | { contains: string }>> {
+): Array<Record<string, TextFilter>> {
   const needle = q.trim();
   if (!needle) return [];
-  const clauses: Array<Record<string, { startsWith: string } | { contains: string }>> = [];
+  const clauses: Array<Record<string, TextFilter>> = [];
   for (const field of fields) {
-    clauses.push({ [field]: { startsWith: needle } });
+    clauses.push({ [field]: { startsWith: needle, mode: "insensitive" } });
   }
   for (const field of fields) {
-    clauses.push({ [field]: { contains: needle } });
+    clauses.push({ [field]: { contains: needle, mode: "insensitive" } });
   }
   return clauses;
 }

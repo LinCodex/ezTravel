@@ -32,7 +32,7 @@ Please do not open a public GitHub issue for vulnerabilities that could expose c
 
 - Do not store full payment card numbers. Card checkout is intended to go through a payment processor (Square mock today).
 - Order pages are tied to email + order reference; treat those links as confidential.
-- Local SQLite databases (`prisma/*.db`) are gitignored and should not be published.
+- Never commit real `DATABASE_URL` credentials; keep secrets in Vercel env / local `.env` only.
 
 ## Dependencies
 

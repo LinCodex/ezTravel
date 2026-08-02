@@ -40,10 +40,6 @@ export default function PartnerLoginPage() {
         <p className="mt-2 text-sm text-[var(--pp-muted)]">
           Access is by invitation only. Contact support if you need an account.
         </p>
-        <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-xs text-[var(--pp-muted)]">
-          Mock demo: <span className="text-white">demo@partner.test</span> /{" "}
-          <span className="text-white">partner123</span>
-        </div>
         <form onSubmit={onSubmit} className="mt-6 space-y-4">
           <label className="pp-label mb-0">
             Email
@@ -53,7 +49,7 @@ export default function PartnerLoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="pp-input mt-1"
-              placeholder="demo@partner.test"
+              placeholder="you@company.com"
               autoComplete="username"
             />
           </label>
@@ -65,7 +61,7 @@ export default function PartnerLoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="pp-input mt-1"
-              placeholder="partner123"
+              placeholder="Password"
               autoComplete="current-password"
             />
           </label>

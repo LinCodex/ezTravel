@@ -26,7 +26,7 @@ let warned = false;
 
 export function getEnv(): EnvShape {
   const env: EnvShape = {
-    DATABASE_URL: read("DATABASE_URL", "file:./dev.db"),
+    DATABASE_URL: read("DATABASE_URL"),
     ADMIN_USERNAME: read("ADMIN_USERNAME", "admin"),
     ADMIN_PASSWORD: read("ADMIN_PASSWORD"),
     ADMIN_SESSION_SECRET: read("ADMIN_SESSION_SECRET"),

@@ -56,7 +56,7 @@ export function isDbConnectivityError(err: unknown): boolean {
 
 export function dbSetupHint(): string {
   return (
-    "Database unavailable. Locally run: npx prisma db push && npx tsx scripts/ensure-demo-partner.ts. " +
-    "On Vercel, SQLite is not supported — set DATABASE_URL to a Postgres URL (e.g. Neon) and run migrations."
+    "Database unavailable. Set DATABASE_URL to a Neon Postgres URL (Vercel → Storage → Neon), " +
+    "then redeploy — or locally: npx prisma db push && npm run db:prepare. See docs/production-in-3-steps.md."
   );
 }

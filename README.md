@@ -14,17 +14,18 @@ Bilingual (English / 中文) travel eSIM store for customers buying data plans b
 ## Stack
 
 - Next.js (App Router), TypeScript, Tailwind CSS
-- Prisma with SQLite for local development
+- Prisma with Postgres (Neon via Vercel Storage)
 - Plan catalog imported from `data/prices.csv`
 
 ## Requirements
 
 - Node.js 20+
 - npm 10+
+- A Postgres `DATABASE_URL` (create free Neon in Vercel → Storage)
 
 ## Setup
 
-1. Clone the repository and install dependencies:
+1. Clone and install:
 
 ```bash
 git clone https://github.com/LinCodex/ezTravel.git
@@ -32,22 +33,22 @@ cd ezTravel
 npm install
 ```
 
-2. Configure environment variables:
+2. Configure env:
 
 ```bash
 cp .env.example .env
 ```
 
-Edit `.env` and set strong values for `ADMIN_USERNAME`, `ADMIN_PASSWORD`, and `ADMIN_SESSION_SECRET` before deploying. See [SECURITY.md](./SECURITY.md).
+Paste a Neon `DATABASE_URL` (from Vercel → Storage). Set admin/session secrets. See [SECURITY.md](./SECURITY.md).
 
-3. Create the database and import plans:
+3. Create tables + seed:
 
 ```bash
 npm run db:push
-npm run db:seed
+npm run db:prepare
 ```
 
-4. Start the development server:
+4. Start:
 
 ```bash
 npm run dev
@@ -60,26 +61,30 @@ Open [http://localhost:3000](http://localhost:3000).
 | Command | Description |
 | --- | --- |
 | `npm run dev` | Start the Next.js development server |
-| `npm run build` | Production build |
+| `npm run build` | Production build (also pushes schema + prepares DB) |
 | `npm run start` | Run the production server |
 | `npm run lint` | Run ESLint |
-| `npm run db:push` | Apply Prisma schema to the local database |
-| `npm run db:seed` | Import / refresh plans from `data/prices.csv` |
+| `npm run db:push` | Apply Prisma schema |
+| `npm run db:prepare` | Seed plans (if empty) + demo partner |
+| `npm run db:seed` | Re-import plans from `data/prices.csv` |
 
 ## Local mock logins
 
 | Surface | URL | Credentials |
 | --- | --- | --- |
 | Consumer store | `/` | No login — checkout with any email |
-| Admin | `/admin/login` | `admin` / `eztravel123` (from `.env`; defaults in `src/lib/admin/auth.ts`) |
+| Admin | `/admin/login` | `admin` / `eztravel123` (from `.env`) |
 | Partner portal | `/partner/login` | `demo@partner.test` / `partner123` |
 
-Create or reset a partner:
+## Production (Vercel) — 3 steps
 
-```bash
-npx tsx scripts/create-partner.ts demo@partner.test "Demo Travel Store" partner123 10001
-npx tsx scripts/bootstrap-partner-demo.ts   # sets demo balance to $500
-```
+SQLite does not work on Vercel. See **[docs/production-in-3-steps.md](./docs/production-in-3-steps.md)**:
+
+1. Vercel → **Storage** → Create **Neon** database  
+2. Set admin/session env vars  
+3. Redeploy (build auto-creates tables + demo partner)
+
+Use the same Neon `DATABASE_URL` in local `.env` so local and production share one DB.
 
 ## Admin panel
 
