@@ -305,6 +305,10 @@ const en = {
     statusPaid: "payment confirmed, preparing your esim",
     statusDelivered: "esim delivered",
     statusCancelled: "order cancelled",
+    statusFailed: "provisioning issue — we're on it",
+    statusRefunded: "order refunded",
+    failedNote:
+      "your payment went through, but we hit a snag provisioning the eSIM. our team has been notified and will retry shortly. you don't need to do anything.",
     awaitingNote:
       "we confirm manual payments within 1 hour (usually much faster). keep this page open. it refreshes automatically.",
     timeRemaining: "max wait remaining",
@@ -769,6 +773,10 @@ const zh: typeof en = {
     statusPaid: "付款已确认，正在准备您的eSIM",
     statusDelivered: "eSIM已发货",
     statusCancelled: "订单已取消",
+    statusFailed: "开通异常，我们正在处理",
+    statusRefunded: "订单已退款",
+    failedNote:
+      "付款已成功，但eSIM开通遇到问题。我们已收到通知并将尽快重试，您无需操作。",
     awaitingNote:
       "人工付款将在1小时内确认（通常快得多）。请保持页面打开，会自动刷新。",
     timeRemaining: "最长等待剩余",

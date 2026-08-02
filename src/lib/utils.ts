@@ -15,20 +15,36 @@ export function formatData(gb: number): string {
   return `${gb}GB`;
 }
 
-export function generateOrderRef(): string {
-  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-  let ref = "";
-  for (let i = 0; i < 6; i++) {
-    ref += chars[Math.floor(Math.random() * chars.length)];
+const REF_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+
+function randomRefToken(length: number): string {
+  // crypto when available (Node / modern browsers); Math.random fallback for edge cases
+  const bytes =
+    typeof crypto !== "undefined" && "getRandomValues" in crypto
+      ? crypto.getRandomValues(new Uint8Array(length))
+      : Uint8Array.from({ length }, () => Math.floor(Math.random() * 256));
+  let out = "";
+  for (let i = 0; i < length; i++) {
+    out += REF_ALPHABET[bytes[i]! % REF_ALPHABET.length];
   }
-  return `EZ-${ref}`;
+  return out;
+}
+
+/** Consumer order reference, e.g. EZ-K7M2PQ */
+export function generateOrderRef(): string {
+  return `EZ-${randomRefToken(8)}`;
+}
+
+/** Partner order reference, e.g. PO-9X4H2MQL */
+export function generatePartnerOrderRef(): string {
+  return `PO-${randomRefToken(8)}`;
+}
+
+/** Partner top-up invoice number, e.g. INV-R3K9W2MH */
+export function generateInvNumber(): string {
+  return `INV-${randomRefToken(8)}`;
 }
 
 export function generateCartGroup(): string {
-  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-  let ref = "";
-  for (let i = 0; i < 8; i++) {
-    ref += chars[Math.floor(Math.random() * chars.length)];
-  }
-  return `CG-${ref}`;
+  return `CG-${randomRefToken(8)}`;
 }

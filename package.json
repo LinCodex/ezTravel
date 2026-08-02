@@ -8,14 +8,22 @@
     "start": "next start",
     "lint": "eslint",
     "db:push": "prisma db push",
-    "db:seed": "tsx scripts/import-plans.ts"
+    "db:migrate": "prisma migrate deploy",
+    "db:migrate:dev": "prisma migrate dev",
+    "db:seed": "tsx scripts/import-plans.ts",
+    "plans:sync": "tsx scripts/sync-plans.ts",
+    "db:seed-tax": "tsx scripts/seed-partner-tax.ts",
+    "partner:create": "tsx scripts/create-partner.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.19.3",
+    "exceljs": "^4.4.0",
+    "jspdf": "^3.0.4",
     "next": "16.2.12",
     "qrcode": "^1.5.4",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "recharts": "^2.15.4"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

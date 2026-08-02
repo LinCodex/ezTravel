@@ -35,8 +35,10 @@ yarn-error.log*
 !.env.example
 
 # databases (local SQLite) — keep journal/wal files out of version control
+prisma/*.db
 prisma/*.db-journal
 prisma/*.db-wal
+prisma/prisma/
 *.db-journal
 *.db-wal
 

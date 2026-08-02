@@ -109,7 +109,11 @@ export function OrderStatus({ orderRef, email }: { orderRef: string; email: stri
           ? t.order.statusPaid
           : order.status === "DELIVERED"
             ? t.order.statusDelivered
-            : t.order.statusCancelled;
+            : order.status === "FAILED"
+              ? t.order.statusFailed
+              : order.status === "REFUNDED"
+                ? t.order.statusRefunded
+                : t.order.statusCancelled;
 
   return (
     <section className="px-5 md:px-10 pt-28 md:pt-32 pb-16 md:pb-20 flex-1">
@@ -127,13 +131,19 @@ export function OrderStatus({ orderRef, email }: { orderRef: string; email: stri
               className={`h-2.5 w-2.5 rounded-full ${
                 order.status === "DELIVERED"
                   ? "bg-green-400"
-                  : order.status === "CANCELLED"
+                  : order.status === "CANCELLED" || order.status === "FAILED" || order.status === "REFUNDED"
                     ? "bg-red-400"
                     : "bg-yellow-400 animate-pulse"
               }`}
             />
             <p className="text-white text-base font-medium">{statusLabel}</p>
           </div>
+
+          {order.status === "FAILED" && (
+            <div className="mt-4">
+              <p className="text-white/60 text-sm leading-relaxed">{t.order.failedNote}</p>
+            </div>
+          )}
 
           {order.status === "AWAITING_CONFIRMATION" && (
             <div className="mt-4">

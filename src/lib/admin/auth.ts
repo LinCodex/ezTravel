@@ -3,9 +3,17 @@ import { cookies } from "next/headers";
 
 const COOKIE_NAME = "ez_admin";
 
+function requireInProduction(name: string, fallback: string): string {
+  if (process.env.NODE_ENV === "production") {
+    throw new Error(`${name} must be set in production`);
+  }
+  return fallback;
+}
+
 function secret(): string {
   const value = process.env.ADMIN_SESSION_SECRET?.trim();
-  return value && value.length > 0 ? value : "eztravel-admin-session-secret-2026";
+  if (value && value.length > 0) return value;
+  return requireInProduction("ADMIN_SESSION_SECRET", "eztravel-admin-session-secret-2026");
 }
 
 function adminUsername(): string {
@@ -15,7 +23,8 @@ function adminUsername(): string {
 
 function adminPassword(): string {
   const value = process.env.ADMIN_PASSWORD;
-  return value && value.length > 0 ? value : "eztravel123";
+  if (value && value.length > 0) return value;
+  return requireInProduction("ADMIN_PASSWORD", "eztravel123");
 }
 
 function sign(value: string): string {

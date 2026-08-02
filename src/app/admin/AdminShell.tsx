@@ -15,8 +15,13 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   }
 
   const links = [
-    { href: "/admin/orders", label: "Orders & CRM" },
-    { href: "/admin/pricing", label: "Pricing & Plans" },
+    { href: "/admin", label: "Dashboard", exact: true },
+    { href: "/admin/orders", label: "Orders" },
+    { href: "/admin/esims", label: "eSIMs" },
+    { href: "/admin/customers", label: "Customers" },
+    { href: "/admin/pricing", label: "Pricing" },
+    { href: "/admin/partners", label: "Partners" },
+    { href: "/admin/topups", label: "Top-ups" },
   ];
 
   return (
@@ -30,20 +35,25 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
                 ezTravel <span className="text-white/40 font-normal">Admin</span>
               </span>
             </Link>
-            <nav className="flex items-center gap-1">
-              {links.map((l) => (
-                <Link
-                  key={l.href}
-                  href={l.href}
-                  className={`text-xs sm:text-sm px-3 sm:px-4 py-1.5 rounded-full transition-all whitespace-nowrap font-medium ${
-                    pathname.startsWith(l.href)
-                      ? "bg-white text-black shadow-md"
-                      : "text-neutral-300 hover:text-white hover:bg-white/5"
-                  }`}
-                >
-                  {l.label}
-                </Link>
-              ))}
+            <nav className="flex items-center gap-1 flex-wrap">
+              {links.map((l) => {
+                const active = "exact" in l && l.exact ? pathname === l.href : pathname.startsWith(l.href);
+                // Dashboard exact match would also match every /admin/* if we used startsWith.
+                const isActive = l.href === "/admin" ? pathname === "/admin" : active;
+                return (
+                  <Link
+                    key={l.href}
+                    href={l.href}
+                    className={`text-xs sm:text-sm px-3 sm:px-4 py-1.5 rounded-full transition-all whitespace-nowrap font-medium ${
+                      isActive
+                        ? "bg-white text-black shadow-md"
+                        : "text-neutral-300 hover:text-white hover:bg-white/5"
+                    }`}
+                  >
+                    {l.label}
+                  </Link>
+                );
+              })}
             </nav>
           </div>
           <button

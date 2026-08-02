@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { provisionOrder } from "@/lib/esim/provision";
+import { gatewayFor } from "@/lib/payments";
 
-/** Mock Square card payment: instantly marks the order paid and provisions the eSIM. */
+/** Mock Square card payment: charge via payments interface, then provision. */
 export async function POST(
   req: Request,
-  { params }: { params: Promise<{ ref: string }> }
+  { params }: { params: Promise<{ ref: string }> },
 ) {
   const { ref } = await params;
   const body = await req.json().catch(() => null);
@@ -20,9 +21,16 @@ export async function POST(
     return NextResponse.json({ error: "invalid order state" }, { status: 409 });
   }
 
-  // Simulate card processing latency.
-  await new Promise((r) => setTimeout(r, 800));
+  const charge = await gatewayFor("SQUARE").charge({
+    amountUsd: order.amountUsd,
+    orderRef: order.orderRef,
+    email,
+    method: "SQUARE",
+  });
+  if (!charge.ok) {
+    return NextResponse.json({ error: charge.error }, { status: 402 });
+  }
 
   await provisionOrder(order.id);
-  return NextResponse.json({ ok: true });
+  return NextResponse.json({ ok: true, providerRef: charge.providerRef });
 }

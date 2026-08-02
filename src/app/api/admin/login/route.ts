@@ -5,8 +5,17 @@ import {
   sessionToken,
   validCredentials,
 } from "@/lib/admin/auth";
+import { clientKey, rateLimit } from "@/lib/rate-limit";
 
 export async function POST(req: Request) {
+  const limited = rateLimit(clientKey(req, "admin-login"), { limit: 10, windowMs: 60_000 });
+  if (!limited.ok) {
+    return NextResponse.json(
+      { error: "Too many attempts" },
+      { status: 429, headers: { "Retry-After": String(limited.retryAfterSec) } },
+    );
+  }
+
   const body = await req.json().catch(() => null);
   const { username, password } = (body ?? {}) as {
     username?: string;

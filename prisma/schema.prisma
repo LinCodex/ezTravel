@@ -28,9 +28,11 @@ model Plan {
   topUpType       String  @default("")
   visible         Boolean @default(true)
   orders          Order[]
+  partnerItems    PartnerOrderItem[]
 
   @@index([regionSlug])
   @@index([region])
+  @@index([visible, region])
 }
 
 model Order {
@@ -44,15 +46,193 @@ model Order {
   wechatId        String?
   paymentMethod   String // ZELLE | WECHAT | SQUARE
   amountUsd       Float
-  status          String    @default("AWAITING_PAYMENT") // AWAITING_CONFIRMATION | PAID | DELIVERED | CANCELLED
+  status          String    @default("AWAITING_PAYMENT") // AWAITING_PAYMENT | AWAITING_CONFIRMATION | PAID | DELIVERED | FAILED | REFUNDED | CANCELLED
   esimIccid       String?
   esimActivation  String? // LPA activation string
   esimSmdp        String?
   supplierOrderNo String?
+  esimTranNo      String? // supplier per-profile transaction number (lifecycle ops + webhooks)
+  failureReason   String? // last provisioning error, surfaced in admin
+  adminNote       String    @default("")
   createdAt       DateTime  @default(now())
   paidAt          DateTime?
   deliveredAt     DateTime?
 
   @@index([status])
   @@index([cartGroup])
+  @@index([email])
+  @@index([esimTranNo])
+  @@index([createdAt])
+}
+
+model Partner {
+  id                   String           @id @default(cuid())
+  email                String           @unique
+  passwordHash         String
+  companyName          String
+  contactFirstName     String
+  contactLastName      String
+  contactPhone         String           @default("")
+  storeZip             String
+  storeState           String           @default("")
+  status               String           @default("ACTIVE") // ACTIVE | SUSPENDED
+  role                 String           @default("PARTNER")
+  balanceUsd           Float            @default(0)
+  retailMarkupPercent  Float            @default(20)
+  brandName            String           @default("")
+  brandAlias           String           @unique
+  brandUrl             String           @default("")
+  brandEmail           String           @default("")
+  brandLogoUrl         String           @default("")
+  brandIconUrl         String           @default("")
+  brandHeroUrl         String           @default("")
+  brandColor           String           @default("#10b981")
+  supportEmail         String           @default("")
+  supportPhone         String           @default("")
+  adminNotes           String           @default("")
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+  orders               PartnerOrder[]
+  esims                PartnerEsim[]
+  topUps               BalanceTopUp[]
+  quickShares          QuickShareLink[]
+  feedback             PartnerFeedback[]
+
+  @@index([status])
+}
+
+model PartnerOrder {
+  id          String             @id @default(cuid())
+  orderRef    String             @unique
+  partnerId   String
+  partner     Partner            @relation(fields: [partnerId], references: [id])
+  status      String             @default("PENDING") // PENDING | PROCESSING | DELIVERED | FAILED | CANCELLED
+  packageType String             @default("ESIM") // ESIM | TOPUP
+  quantity    Int                @default(1)
+  subtotalUsd Float
+  taxUsd      Float
+  totalUsd    Float
+  orderedBy   String             @default("")
+  createdAt   DateTime           @default(now())
+  deliveredAt DateTime?
+  items       PartnerOrderItem[]
+  esims       PartnerEsim[]
+  quickShares QuickShareLink[]
+
+  @@index([partnerId])
+  @@index([status])
+  @@index([createdAt])
+  @@index([partnerId, status])
+  @@index([partnerId, createdAt])
+}
+
+model PartnerOrderItem {
+  id             String       @id @default(cuid())
+  orderId        String
+  order          PartnerOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  planId         String
+  plan           Plan         @relation(fields: [planId], references: [id])
+  quantity       Int          @default(1)
+  unitCostUsd    Float
+  unitWholesale  Float
+  taxUsd         Float
+  networks       String       @default("")
+  planName       String       @default("")
+  region         String       @default("")
+  dataLabel      String       @default("")
+  validityDays   Int          @default(1)
+
+  @@index([orderId])
+  @@index([planId])
+}
+
+model PartnerEsim {
+  id              String           @id @default(cuid())
+  partnerId       String
+  partner         Partner          @relation(fields: [partnerId], references: [id])
+  orderId         String?
+  order           PartnerOrder?    @relation(fields: [orderId], references: [id])
+  planId          String           @default("")
+  planName        String           @default("")
+  region          String           @default("")
+  regionCode      String           @default("") // ISO / supplier location code for flags
+  dataLabel       String           @default("")
+  validityDays    Int              @default(1)
+  networks        String           @default("")
+  status          String           @default("PENDING_ACTIVATION") // PENDING_ACTIVATION | ACTIVE | EXPIRED | REFUNDED | SUSPENDED
+  iccid           String?
+  assignee        String           @default("")
+  nickname        String           @default("")
+  notes           String           @default("")
+  activationCode  String?
+  smdpAddress     String?
+  matchingId      String?
+  supplierOrderNo String?
+  esimTranNo      String? // supplier per-profile transaction no (lifecycle ops + webhooks)
+  dataRemainingGb Float?
+  refunded        Boolean          @default(false)
+  archived        Boolean          @default(false)
+  unitPaidUsd     Float            @default(0)
+  issuedAt        DateTime         @default(now())
+  activatedAt     DateTime?
+  expiresAt       DateTime?
+  quickShares     QuickShareLink[]
+
+  @@index([partnerId])
+  @@index([status])
+  @@index([iccid])
+  @@index([orderId])
+  @@index([partnerId, status])
+  @@index([partnerId, issuedAt])
+  @@index([partnerId, archived])
+  @@index([esimTranNo])
+}
+
+model BalanceTopUp {
+  id          String    @id @default(cuid())
+  invNumber   String    @unique
+  partnerId   String
+  partner     Partner   @relation(fields: [partnerId], references: [id])
+  amountUsd   Float
+  paymentType String // ZELLE | VENMO | WECHAT | CASH
+  status      String    @default("PENDING") // PENDING | APPROVED | REJECTED | CANCELLED
+  adminNote   String    @default("")
+  createdAt   DateTime  @default(now())
+  reviewedAt  DateTime?
+
+  @@index([partnerId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model QuickShareLink {
+  id        String        @id @default(cuid())
+  token     String        @unique
+  partnerId String
+  partner   Partner       @relation(fields: [partnerId], references: [id])
+  esimId    String?
+  esim      PartnerEsim?  @relation(fields: [esimId], references: [id])
+  orderId   String?
+  order     PartnerOrder? @relation(fields: [orderId], references: [id])
+  createdAt DateTime      @default(now())
+  expiresAt DateTime?
+
+  @@index([partnerId])
+  @@index([token])
+}
+
+model StateTaxRate {
+  stateCode String @id // e.g. CA
+  stateName String
+  rate      Float // e.g. 0.0725
+}
+
+model PartnerFeedback {
+  id        String   @id @default(cuid())
+  partnerId String
+  partner   Partner  @relation(fields: [partnerId], references: [id])
+  message   String
+  createdAt DateTime @default(now())
+
+  @@index([partnerId])
 }

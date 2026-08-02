@@ -66,12 +66,27 @@ Open [http://localhost:3000](http://localhost:3000).
 | `npm run db:push` | Apply Prisma schema to the local database |
 | `npm run db:seed` | Import / refresh plans from `data/prices.csv` |
 
+## Local mock logins
+
+| Surface | URL | Credentials |
+| --- | --- | --- |
+| Consumer store | `/` | No login — checkout with any email |
+| Admin | `/admin/login` | `admin` / `eztravel123` (from `.env`; defaults in `src/lib/admin/auth.ts`) |
+| Partner portal | `/partner/login` | `demo@partner.test` / `partner123` |
+
+Create or reset a partner:
+
+```bash
+npx tsx scripts/create-partner.ts demo@partner.test "Demo Travel Store" partner123 10001
+npx tsx scripts/bootstrap-partner-demo.ts   # sets demo balance to $500
+```
+
 ## Admin panel
 
 - URL: `/admin`
-- Credentials: `ADMIN_USERNAME` and `ADMIN_PASSWORD` from `.env`
-- **Orders**: confirm Zelle / WeChat payments; confirmation provisions the eSIM
-- **Pricing**: search plans, override sell prices, hide or show plans
+- Credentials: see **Local mock logins** above
+- **Dashboard / Orders / eSIMs / Customers / Partners / Top-ups / Pricing**
+- Confirming Zelle / WeChat payments provisions the eSIM
 
 Admin price overrides are preserved across `npm run db:seed` runs when `priceOverridden` is set.
 

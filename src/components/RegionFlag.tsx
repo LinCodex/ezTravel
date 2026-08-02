@@ -46,17 +46,16 @@ export function RegionFlag({
     );
   }
 
-  // Multi-country: stack up to 3 flags
-  const shown = codes.slice(0, 3);
+  // Multi-country: show every flag (wrap when needed)
   return (
-    <span className={`relative inline-flex items-center ${className}`} aria-hidden>
-      {shown.map((code, i) => (
+    <span
+      className={`inline-flex max-w-full flex-wrap items-center gap-1 ${className}`}
+      aria-hidden
+    >
+      {codes.map((code, i) => (
         <span
           key={`${code}-${i}`}
-          className={`inline-block overflow-hidden rounded-sm ring-1 ring-black/40 shadow-sm ${dim} ${
-            i > 0 ? "-ml-3" : ""
-          }`}
-          style={{ zIndex: shown.length - i }}
+          className={`inline-block shrink-0 overflow-hidden rounded-sm ring-1 ring-white/15 shadow-sm ${dim}`}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -67,9 +66,6 @@ export function RegionFlag({
           />
         </span>
       ))}
-      {codes.length > 3 && (
-        <span className="ml-1.5 text-[10px] text-white/50 font-medium">+{codes.length - 3}</span>
-      )}
     </span>
   );
 }

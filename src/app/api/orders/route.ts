@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { clientKey, rateLimit } from "@/lib/rate-limit";
 import { generateCartGroup, generateOrderRef } from "@/lib/utils";
 
 type PaymentMethod = "ZELLE" | "WECHAT" | "SQUARE";
@@ -51,6 +52,14 @@ async function buildOrderLines(items: IncomingItem[]) {
 }
 
 export async function POST(req: Request) {
+  const limited = rateLimit(clientKey(req, "orders-create"), { limit: 20, windowMs: 60_000 });
+  if (!limited.ok) {
+    return NextResponse.json(
+      { error: "Too many requests" },
+      { status: 429, headers: { "Retry-After": String(limited.retryAfterSec) } },
+    );
+  }
+
   const body = await req.json().catch(() => null);
   if (!body) return NextResponse.json({ error: "invalid body" }, { status: 400 });
 
