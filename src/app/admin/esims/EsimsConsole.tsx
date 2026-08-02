@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { readJson } from "@/lib/fetch-json";
 
 type Row = {
   id: string;
@@ -27,6 +28,7 @@ export function EsimsConsole() {
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState<string | null>(null);
+  const [error, setError] = useState("");
   const pageSize = 25;
 
   useEffect(() => {
@@ -39,14 +41,17 @@ export function EsimsConsole() {
 
   const load = useCallback(() => {
     setLoading(true);
+    setError("");
     const p = new URLSearchParams({ page: String(page), pageSize: String(pageSize), source });
     if (debouncedQ) p.set("q", debouncedQ);
     fetch(`/api/admin/esims?${p}`)
-      .then((r) => r.json())
-      .then((d) => {
-        setItems(d.items || []);
-        setTotal(d.total || 0);
+      .then((r) => readJson<{ items?: Row[]; total?: number; error?: string }>(r))
+      .then(({ ok, data, error: err }) => {
+        setItems(data?.items || []);
+        setTotal(data?.total || 0);
+        if (!ok) setError(err || data?.error || "Failed to load eSIMs");
       })
+      .catch(() => setError("Failed to load eSIMs"))
       .finally(() => setLoading(false));
   }, [page, source, debouncedQ]);
 
@@ -79,6 +84,12 @@ export function EsimsConsole() {
         <h1 className="text-xl sm:text-2xl font-semibold text-white">eSIM Console</h1>
         <p className="text-xs text-white/50 mt-0.5">Consumer + partner profiles with lifecycle actions</p>
       </div>
+
+      {error && (
+        <div className="rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-xs text-red-200">
+          {error}
+        </div>
+      )}
 
       <div className="flex flex-wrap gap-2">
         <input

@@ -14,7 +14,8 @@
     "db:seed": "tsx scripts/import-plans.ts",
     "plans:sync": "tsx scripts/sync-plans.ts",
     "db:seed-tax": "tsx scripts/seed-partner-tax.ts",
-    "partner:create": "tsx scripts/create-partner.ts"
+    "partner:create": "tsx scripts/create-partner.ts",
+    "partner:demo": "tsx scripts/ensure-demo-partner.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.19.3",

@@ -2,12 +2,14 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { isAdminAuthenticated } from "@/lib/admin/auth";
 import { usageQuery } from "@/lib/esim/access-client";
+import { dbSetupHint, isDbConnectivityError } from "@/lib/partner/ensure-demo";
 
 export async function GET(req: Request) {
   if (!(await isAdminAuthenticated())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  try {
   const { searchParams } = new URL(req.url);
   const q = (searchParams.get("q") || "").trim().toLowerCase();
   const source = searchParams.get("source") || "all"; // all | consumer | partner
@@ -129,4 +131,11 @@ export async function GET(req: Request) {
   );
 
   return NextResponse.json({ total, page, pageSize, items: withUsage });
+  } catch (err) {
+    console.error("[admin/esims]", err);
+    return NextResponse.json(
+      { error: isDbConnectivityError(err) ? dbSetupHint() : "Failed to load eSIMs", items: [], total: 0 },
+      { status: isDbConnectivityError(err) ? 503 : 500 },
+    );
+  }
 }

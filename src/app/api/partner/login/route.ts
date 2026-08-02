@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { isMockProvisioning } from "@/lib/esim/access-client";
 import {
   PARTNER_COOKIE,
   partnerCookieOptions,
@@ -7,6 +8,12 @@ import {
   publicPartner,
   verifyPassword,
 } from "@/lib/partner/auth";
+import {
+  DEMO_PARTNER_EMAIL,
+  dbSetupHint,
+  ensureDemoPartner,
+  isDbConnectivityError,
+} from "@/lib/partner/ensure-demo";
 import { clientKey, rateLimit } from "@/lib/rate-limit";
 
 export async function POST(req: Request) {
@@ -29,6 +36,11 @@ export async function POST(req: Request) {
   }
 
   try {
+    // In mock mode, keep the documented demo account always available.
+    if (isMockProvisioning() && email === DEMO_PARTNER_EMAIL) {
+      await ensureDemoPartner();
+    }
+
     const partner = await prisma.partner.findUnique({ where: { email } });
     if (!partner || !verifyPassword(password, partner.passwordHash)) {
       return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
@@ -42,6 +54,9 @@ export async function POST(req: Request) {
     return res;
   } catch (err) {
     console.error("[partner/login]", err);
+    if (isDbConnectivityError(err)) {
+      return NextResponse.json({ error: dbSetupHint() }, { status: 503 });
+    }
     return NextResponse.json({ error: "Login failed" }, { status: 500 });
   }
 }

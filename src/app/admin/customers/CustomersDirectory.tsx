@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { readJson } from "@/lib/fetch-json";
 import { formatUsd } from "@/lib/utils";
 
 type Customer = {
@@ -19,6 +20,7 @@ export function CustomersDirectory() {
   const [debouncedQ, setDebouncedQ] = useState("");
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const t = setTimeout(() => setDebouncedQ(q), 250);
@@ -27,11 +29,16 @@ export function CustomersDirectory() {
 
   useEffect(() => {
     setLoading(true);
+    setError("");
     const p = new URLSearchParams();
     if (debouncedQ) p.set("q", debouncedQ);
     fetch(`/api/admin/customers?${p}`)
-      .then((r) => r.json())
-      .then((d) => setCustomers(d.customers || []))
+      .then((r) => readJson<{ customers?: Customer[]; error?: string }>(r))
+      .then(({ ok, data, error: err }) => {
+        setCustomers(data?.customers || []);
+        if (!ok) setError(err || data?.error || "Failed to load customers");
+      })
+      .catch(() => setError("Failed to load customers"))
       .finally(() => setLoading(false));
   }, [debouncedQ]);
 
@@ -41,6 +48,12 @@ export function CustomersDirectory() {
         <h1 className="text-xl sm:text-2xl font-semibold text-white">Customers</h1>
         <p className="text-xs text-white/50 mt-0.5">Grouped by email across consumer orders</p>
       </div>
+
+      {error && (
+        <div className="rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-xs text-red-200">
+          {error}
+        </div>
+      )}
 
       <input
         className="w-full max-w-md bg-neutral-900 border border-white/10 rounded-full px-4 py-2 text-xs text-white"
