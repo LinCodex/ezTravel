@@ -1,13 +1,10 @@
+import { appOrigin } from "@/lib/app-url";
 import { prisma } from "@/lib/db";
 import { isMockProvisioning, orderEsimProfile } from "@/lib/esim/access-client";
 import { partnerOrderEmailHtml, sendEmail } from "@/lib/email";
 import { dataLabel, partnerUnitPrice } from "@/lib/partner/pricing";
 import { roundMoney } from "@/lib/tax/us-state-rates";
 import { generatePartnerOrderRef } from "@/lib/utils";
-
-function appOrigin(): string {
-  return (process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000").replace(/\/$/, "");
-}
 
 export type CartLine = { planId: string; quantity: number };
 

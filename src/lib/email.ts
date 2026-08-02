@@ -3,6 +3,8 @@
  * otherwise logs the message (dev-safe).
  */
 
+import { appOrigin } from "@/lib/app-url";
+
 export async function sendEmail(opts: {
   to: string;
   subject: string;
@@ -40,10 +42,6 @@ export async function sendEmail(opts: {
     return { ok: false };
   }
   return { ok: true };
-}
-
-function appOrigin(): string {
-  return (process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000").replace(/\/$/, "");
 }
 
 export function partnerOrderEmailHtml(opts: {

@@ -1,11 +1,8 @@
 import { randomBytes } from "crypto";
 import { NextResponse } from "next/server";
+import { appOrigin } from "@/lib/app-url";
 import { prisma } from "@/lib/db";
 import { getAuthenticatedPartner } from "@/lib/partner/auth";
-
-function appOrigin() {
-  return (process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000").replace(/\/$/, "");
-}
 
 export async function POST(req: Request) {
   const partner = await getAuthenticatedPartner();
@@ -52,7 +49,7 @@ export async function POST(req: Request) {
     },
   });
 
-  const url = `${appOrigin()}/p/${partner.brandAlias}/share/${link.token}`;
+  const url = `${appOrigin(req)}/p/${partner.brandAlias}/share/${link.token}`;
   return NextResponse.json({
     token: link.token,
     url,
